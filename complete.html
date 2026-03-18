@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>생성 완료</title>
+<script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;600;700&display=swap');
+  :root { --accent:#2C81FC;--text-1:#25262C;--text-off:#B5B9C4;--line-l:#F1F1F4;--bg-white:#FFFFFF;--r-full:9999px;--r-lg:8px;--font:'Inter','Noto Sans KR',-apple-system,sans-serif;--ls:-0.02em; }
+  * { margin:0;padding:0;box-sizing:border-box;writing-mode:horizontal-tb !important; }
+  body { font-family:var(--font);background:var(--bg-white);height:100vh;display:flex;flex-direction:column; }
+  .stepper-bar { padding:20px 80px 16px;border-bottom:1px solid var(--line-l); }
+  .stepper { display:flex;align-items:flex-start;justify-content:center; }
+  .step { display:flex;flex-direction:column;align-items:center;width:90px;gap:4px;min-width:90px; }
+  .step-circle { width:28px;height:28px;border-radius:var(--r-full);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;background:var(--accent);color:#fff; }
+  .step-name { font-size:12px;white-space:nowrap;font-weight:500;color:#596070;letter-spacing:var(--ls); }
+  .step-line { width:36px;height:2px;margin-top:13px;flex-shrink:0;background:var(--accent); }
+  .center { flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center; }
+  .check-circle { width:48px;height:48px;border-radius:var(--r-full);background:var(--accent);display:flex;align-items:center;justify-content:center;margin-bottom:24px; }
+  .title { font-size:20px;line-height:29px;font-weight:600;letter-spacing:var(--ls);color:var(--text-1);margin-bottom:12px; }
+  .desc { font-size:14px;line-height:21px;font-weight:400;letter-spacing:var(--ls);color:var(--text-off);margin-bottom:32px; }
+  .btn { padding:14px 32px;border-radius:var(--r-lg);font-size:16px;font-weight:600;letter-spacing:var(--ls);cursor:pointer;border:none;background:var(--accent);color:#fff;font-family:var(--font); }
+  .footer { padding:16px 80px;border-top:1px solid var(--line-l);display:flex;justify-content:space-between;align-items:center; }
+  .btn-out { padding:10px 24px;border-radius:var(--r-lg);font-size:14px;font-weight:600;letter-spacing:var(--ls);cursor:pointer;border:1px solid #E3E4E8;background:#fff;color:#596070;font-family:var(--font); }
+</style>
+</head>
+<body>
+<div class="stepper-bar">
+  <div class="stepper">
+    <div class="step"><div class="step-circle">✓</div><div class="step-name">양식 선택</div></div>
+    <div class="step-line"></div>
+    <div class="step"><div class="step-circle">✓</div><div class="step-name">프롬프트</div></div>
+    <div class="step-line"></div>
+    <div class="step"><div class="step-circle">✓</div><div class="step-name">자료 업로드</div></div>
+    <div class="step-line"></div>
+    <div class="step"><div class="step-circle">✓</div><div class="step-name">이미지 선택</div></div>
+    <div class="step-line"></div>
+    <div class="step"><div class="step-circle">✓</div><div class="step-name">설정</div></div>
+    <div class="step-line"></div>
+    <div class="step"><div class="step-circle">✓</div><div class="step-name">생성</div></div>
+  </div>
+</div>
+<div class="center">
+  <div class="check-circle"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div>
+  <div class="title">사업계획서 생성이 완료되었습니다</div>
+  <div class="desc">작성된 사업계획서를 확인하고 다운로드할 수 있습니다.</div>
+  <button class="btn">사업계획서 다운로드</button>
+</div>
+<div class="footer">
+  <div></div>
+  <button class="btn-out">처음으로</button>
+</div>
+</body>
+</html>

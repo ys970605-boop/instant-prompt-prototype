@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>로딩 팝업</title>
+<script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;600;700&display=swap');
+  :root { --accent:#2C81FC;--text-1:#25262C;--text-3:#6E7687;--text-off:#B5B9C4;--line-l:#F1F1F4;--bg-gray:#F1F1F4;--r-2xl:12px;--r-full:9999px;--font:'Inter','Noto Sans KR',-apple-system,sans-serif;--ls:-0.02em; }
+  * { margin:0;padding:0;box-sizing:border-box;writing-mode:horizontal-tb !important; }
+  body { font-family:var(--font);background:rgba(37,38,44,0.3);height:100vh;display:flex;align-items:center;justify-content:center; }
+  .popup { background:#fff;border-radius:var(--r-2xl);padding:40px;width:520px;box-shadow:0px 4px 12px 0px rgba(0,27,55,0.15);text-align:center; }
+  .spinner { width:48px;height:48px;border:3px solid var(--line-l);border-top-color:var(--accent);border-radius:50%;margin:0 auto 24px;animation:spin 1s linear infinite; }
+  @keyframes spin { to { transform:rotate(360deg); } }
+  .title { font-size:20px;line-height:29px;font-weight:600;letter-spacing:var(--ls);color:var(--text-1);margin-bottom:8px; }
+  .desc { font-size:14px;line-height:21px;font-weight:400;letter-spacing:var(--ls);color:var(--text-3);line-height:1.6;margin-bottom:24px; }
+  .steps { text-align:left;display:flex;flex-direction:column;gap:12px;padding:0 20px; }
+  .step { display:flex;align-items:center;gap:12px;font-size:14px;letter-spacing:var(--ls); }
+  .dot { width:20px;height:20px;border-radius:var(--r-full);display:flex;align-items:center;justify-content:center;flex-shrink:0; }
+  .dot.done { background:var(--accent); }
+  .dot.active { border:2px solid var(--accent);animation:pulse 1.5s ease infinite; }
+  .dot.pending { background:var(--bg-gray); }
+  @keyframes pulse { 0%,100%{opacity:1}50%{opacity:0.5} }
+</style>
+</head>
+<body>
+<div class="popup">
+  <div class="spinner"></div>
+  <div class="title">시각 자료를 구성하고 있습니다</div>
+  <div class="desc">양식과 프롬프트를 분석하여<br/>사업계획서에 필요한 이미지 리스트를 생성 중입니다.</div>
+  <div class="steps">
+    <div class="step"><div class="dot done"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg></div><span style="color:var(--text-1)">양식 분석</span></div>
+    <div class="step"><div class="dot done"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg></div><span style="color:var(--text-1)">프롬프트 분석</span></div>
+    <div class="step"><div class="dot active"></div><span style="color:var(--text-1);font-weight:500;">이미지 항목 및 프롬프트 생성 중...</span></div>
+    <div class="step"><div class="dot pending"></div><span style="color:var(--text-off)">추천 이미지 리스트 정리</span></div>
+  </div>
+</div>
+</body>
+</html>

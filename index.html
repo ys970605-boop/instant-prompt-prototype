@@ -548,7 +548,7 @@ function renderAiQuestions() {
       <div class="t-sb-14" style="color:var(--text-1);">${q.num}. ${q.title}</div>
       <div style="position:relative;">
         <textarea class="ds-textarea" style="min-height:120px;" placeholder="${q.placeholder}"></textarea>
-        ${q.num==='1'?'<span class="t-rg-12" style="position:absolute;bottom:12px;right:14px;color:var(--text-off);display:flex;align-items:center;gap:4px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m 21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2.36 18.64a1.21 1.21 0 0 0 0 1.72l1.28 1.28a1.21 1.21 0 0 0 1.72 0L21.64 5.36a1.21 1.21 0 0 0 0-1.72Z"/><path d="m14 7 3 3"/></svg> AI 심사역</span>':''}
+        <button class="btn btn-outlined btn-sm t-md-12" style="position:absolute;bottom:12px;right:14px;display:flex;align-items:center;gap:4px;" onclick="toast('AI 심사역이 답변을 작성 중입니다...')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m 21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2.36 18.64a1.21 1.21 0 0 0 0 1.72l1.28 1.28a1.21 1.21 0 0 0 1.72 0L21.64 5.36a1.21 1.21 0 0 0 0-1.72Z"/><path d="m14 7 3 3"/></svg> AI 심사역</button>
       </div>
     </div>
   `).join('');
@@ -685,6 +685,8 @@ renderBizTable(); renderDocTable(); renderImgTable(); render();
 const urlParams = new URLSearchParams(window.location.search);
 const stepParam = urlParams.get('step');
 if(stepParam) { currentStep = parseInt(stepParam); render(); }
+const tabParam = urlParams.get('tab');
+if(tabParam === 'ai') { setTimeout(() => switchPromptTab('ai'), 100); }
 </script>
 </body>
 </html>
