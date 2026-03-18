@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>인스턴트 프롬프트 — 프로토타입</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;600;700&display=swap');
+
+  /* ===== DS Tokens ===== */
+  :root {
+    /* Colors */
+    --accent: #2C81FC;
+    --accent-dark: #0C52B8;
+    --accent-sub: #EAF3FF;
+    --accent-mid: #ABCDFF;
+    --warn: #F04452;
+    --warn-sub: #FFECEE;
+    --text-1: #25262C;
+    --text-2: #596070;
+    --text-3: #6E7687;
+    --text-off: #B5B9C4;
+    --line-l: #F1F1F4;
+    --line-d: #E3E4E8;
+    --bg-white: #FFFFFF;
+    --bg-light: #FAFAFC;
+    --bg-gray: #F1F1F4;
+    --bg-dark: #3F434D;
+    --black: #25262C;
+
+    /* Radius */
+    --r-sm: 4px;
+    --r-md: 6px;
+    --r-lg: 8px;
+    --r-xl: 10px;
+    --r-2xl: 12px;
+    --r-full: 9999px;
+
+    /* Shadows */
+    --sh-sm: 0px 1px 2px 0px rgba(0,27,55,0.08);
+    --sh-base: 0px 2px 4px 0px rgba(0,27,55,0.10);
+    --sh-md: 0px 4px 8px 0px rgba(0,27,55,0.12);
+
+    /* Spacing */
+    --sp-1: 4px; --sp-2: 8px; --sp-3: 12px; --sp-4: 16px;
+    --sp-5: 20px; --sp-6: 24px; --sp-8: 32px; --sp-10: 40px;
+    --sp-12: 48px; --sp-16: 64px; --sp-20: 80px;
+
+    /* Font */
+    --font: 'Inter', 'Noto Sans KR', -apple-system, sans-serif;
+    --ls: -0.02em;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: var(--font); background: var(--bg-white); height: 100vh; overflow: hidden; color: var(--text-1); }
+
+  /* 세로 텍스트 방지 */
+  * { writing-mode: horizontal-tb !important; white-space: normal; min-width: 0; }
+  th, td, .btn, .ds-badge, .ds-seg-item, .pg, label, span, p, h1, h2, h3, a, button, input, select, textarea, div {
+    writing-mode: horizontal-tb !important;
+    word-break: keep-all;
+  }
+  .stepper-label, .step-name, .ds-seg-item, .btn, .ds-badge, .pg { white-space: nowrap; }
+  table { table-layout: auto; }
+  td, th { overflow: visible; text-overflow: ellipsis; }
+
+  /* ===== Layout ===== */
+  .app { display: flex; flex-direction: column; height: 100vh; }
+  .main { flex: 1; display: flex; flex-direction: column; height: 100%; overflow: hidden; }
+
+  /* ===== Stepper ===== */
+  .stepper-bar { padding: var(--sp-5) var(--sp-20) var(--sp-4); border-bottom: 1px solid var(--line-l); flex-shrink: 0; }
+  .stepper-label { font-size: 12px; line-height: 18px; font-weight: 500; letter-spacing: var(--ls); color: var(--text-3); margin-bottom: 14px; }
+  .stepper { display: flex; align-items: flex-start; justify-content: center; }
+  .step { display: flex; flex-direction: column; align-items: center; width: 90px; gap: var(--sp-1); cursor: pointer; min-width: 90px; }
+  .step-circle { width: 28px; height: 28px; border-radius: var(--r-full); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; letter-spacing: var(--ls); transition: all 0.2s; }
+  .step-circle.done { background: var(--accent); color: #fff; }
+  .step-circle.active { background: #fff; border: 2.5px solid var(--accent); color: var(--accent); }
+  .step-circle.pending { background: var(--bg-gray); color: var(--text-off); }
+  .step-name { font-size: 12px; line-height: 18px; letter-spacing: var(--ls); white-space: nowrap; }
+  .step-name.done { font-weight: 500; color: var(--text-2); }
+  .step-name.active { font-weight: 600; color: var(--text-1); }
+  .step-name.pending { font-weight: 500; color: var(--text-off); }
+  .step-line { width: 36px; height: 2px; margin-top: 13px; flex-shrink: 0; transition: background 0.2s; }
+  .step-line.done { background: var(--accent); }
+  .step-line.pending { background: var(--line-d); }
+
+  /* ===== Content ===== */
+  .content-area { flex: 1; overflow-y: auto; scrollbar-width: none; }
+  .content-area::-webkit-scrollbar { display: none; }
+  .step-content { display: none; padding: var(--sp-10) var(--sp-20); max-width: 1080px; margin: 0 auto; width: 100%; min-width: 0; animation: fadeIn 0.25s ease; }
+  .step-content.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* ===== Footer ===== */
+  .footer { padding: var(--sp-4) var(--sp-20); border-top: 1px solid var(--line-l); display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
+  .footer-right { display: flex; gap: var(--sp-3); }
+
+  /* ===== DS Button ===== */
+  .btn { padding: 10px var(--sp-6); border-radius: var(--r-lg); font-size: 14px; line-height: 21px; font-weight: 600; letter-spacing: var(--ls); cursor: pointer; border: none; transition: all 0.15s; font-family: var(--font); }
+  .btn:hover { filter: brightness(0.95); }
+  .btn:active { transform: scale(0.98); }
+  .btn-filled { background: var(--accent); color: #fff; }
+  .btn-filled:hover { background: var(--accent-dark); }
+  .btn-outlined { background: var(--bg-white); color: var(--text-2); border: 1px solid var(--line-d); }
+  .btn-outlined:hover { background: var(--bg-light); }
+  .btn-text { background: none; color: var(--text-3); border: none; }
+  .btn-warning { background: var(--warn-sub); color: var(--warn); border: 1px solid var(--warn); }
+  .btn-lg { padding: 14px var(--sp-8); font-size: 16px; line-height: 24px; }
+  .btn-sm { padding: 6px var(--sp-4); font-size: 13px; line-height: 19.5px; }
+  .btn-disabled { background: var(--bg-gray); color: var(--text-off); cursor: not-allowed; border: none; }
+
+  /* ===== DS Typography ===== */
+  .t-sb-32 { font-size: 32px; line-height: 42px; font-weight: 600; letter-spacing: var(--ls); }
+  .t-sb-24 { font-size: 24px; line-height: 32px; font-weight: 600; letter-spacing: var(--ls); }
+  .t-sb-20 { font-size: 20px; line-height: 29px; font-weight: 600; letter-spacing: var(--ls); }
+  .t-sb-18 { font-size: 18px; line-height: 27px; font-weight: 600; letter-spacing: var(--ls); }
+  .t-sb-16 { font-size: 16px; line-height: 24px; font-weight: 600; letter-spacing: var(--ls); }
+  .t-sb-14 { font-size: 14px; line-height: 21px; font-weight: 600; letter-spacing: var(--ls); }
+  .t-md-16 { font-size: 16px; line-height: 24px; font-weight: 500; letter-spacing: var(--ls); }
+  .t-md-14 { font-size: 14px; line-height: 21px; font-weight: 500; letter-spacing: var(--ls); }
+  .t-md-13 { font-size: 13px; line-height: 19.5px; font-weight: 500; letter-spacing: var(--ls); }
+  .t-md-12 { font-size: 12px; line-height: 18px; font-weight: 500; letter-spacing: var(--ls); }
+  .t-rg-14 { font-size: 14px; line-height: 21px; font-weight: 400; letter-spacing: var(--ls); }
+  .t-rg-13 { font-size: 13px; line-height: 19.5px; font-weight: 400; letter-spacing: var(--ls); }
+  .t-rg-12 { font-size: 12px; line-height: 18px; font-weight: 400; letter-spacing: var(--ls); }
+
+  /* ===== Common ===== */
+  .page-title { color: var(--text-1); margin-bottom: var(--sp-6); }
+  .step-title { color: var(--text-1); text-align: center; margin-bottom: var(--sp-5); }
+  .step-title .hl { color: var(--accent); }
+  .info-banner { background: var(--accent-sub); border-radius: var(--r-lg); padding: 14px 18px; display: flex; align-items: center; gap: var(--sp-2); margin-bottom: var(--sp-5); color: var(--text-2); }
+  .info-banner .ic { color: var(--accent); flex-shrink: 0; }
+  .section-title { color: var(--text-1); margin-bottom: var(--sp-4); }
+  .desc-text { color: var(--text-3); margin-bottom: var(--sp-3); line-height: 1.5; }
+  .centered { max-width: 800px; margin: 0 auto; }
+  .wide { max-width: 960px; margin: 0 auto; }
+
+  /* ===== DS TextField ===== */
+  .ds-input { width: 100%; height: 40px; padding: 0 var(--sp-3); border: 1px solid var(--line-d); border-radius: var(--r-lg); font-size: 14px; line-height: 21px; font-weight: 400; letter-spacing: var(--ls); color: var(--text-1); font-family: var(--font); background: var(--bg-white); transition: border-color 0.15s; }
+  .ds-input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 2px rgba(44,129,252,0.12); }
+  .ds-input::placeholder { color: var(--text-off); }
+  .ds-input.search { padding-left: 40px; background: var(--bg-white) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' fill='none' stroke='%23B5B9C4' stroke-width='1.5'%3E%3Ccircle cx='8' cy='8' r='5'/%3E%3Cpath d='m12 12 4 4'/%3E%3C/svg%3E") no-repeat 12px center; }
+  .ds-textarea { width: 100%; min-height: 280px; padding: var(--sp-5); border: 1px solid var(--line-d); border-radius: var(--r-2xl); font-size: 14px; line-height: 1.7; font-weight: 400; letter-spacing: var(--ls); color: var(--text-1); font-family: var(--font); resize: none; }
+  .ds-textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 2px rgba(44,129,252,0.12); }
+  .ds-textarea::placeholder { color: var(--text-off); }
+
+  /* ===== DS Checkbox ===== */
+  .ds-check { width: 20px; height: 20px; border-radius: var(--r-sm); cursor: pointer; accent-color: var(--accent); }
+
+  /* ===== DS Badge ===== */
+  .ds-badge { display: inline-flex; align-items: center; padding: 2px var(--sp-2); border-radius: var(--r-sm); font-size: 12px; line-height: 18px; font-weight: 600; letter-spacing: var(--ls); }
+  .ds-badge.warning { background: var(--warn-sub); color: var(--warn); }
+  .ds-badge.neutral { background: var(--bg-gray); color: var(--text-3); }
+  .ds-badge.active { background: var(--accent-sub); color: var(--accent); }
+  tbody tr.selected .ds-badge { outline: 1px solid var(--bg-white); }
+
+  /* ===== DS SegmentedControl ===== */
+  .ds-seg { display: inline-flex; background: var(--bg-gray); border-radius: var(--r-lg); padding: 3px; gap: 2px; }
+  .ds-seg-item { padding: var(--sp-2) var(--sp-5); border-radius: var(--r-md); border: none; background: transparent; cursor: pointer; color: var(--text-3); font-family: var(--font); transition: all 0.15s; }
+  .ds-seg-item.active { background: var(--bg-white); color: var(--text-1); font-weight: 600; box-shadow: var(--sh-sm); }
+
+  /* ===== DS Select ===== */
+  .ds-select { width: 100%; height: 40px; padding: 0 var(--sp-3); border: 1px solid var(--line-d); border-radius: var(--r-lg); font-size: 14px; letter-spacing: var(--ls); color: var(--text-1); font-family: var(--font); background: var(--bg-white); appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23B5B9C4'%3E%3Cpath d='M6 8L1 3h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; cursor: pointer; }
+  .ds-select:focus { outline: none; border-color: var(--accent); }
+
+  /* ===== DS Toggle ===== */
+  .ds-toggle { width: 48px; height: 26px; border-radius: var(--r-full); position: relative; cursor: pointer; display: inline-block; transition: background 0.2s; border: none; }
+  .ds-toggle.on { background: var(--accent); }
+  .ds-toggle.off { background: var(--line-d); }
+  .ds-toggle::after { content: ''; width: 20px; height: 20px; border-radius: var(--r-full); background: #fff; position: absolute; top: 3px; transition: left 0.2s; box-shadow: var(--sh-sm); }
+  .ds-toggle.on::after { left: 25px; }
+  .ds-toggle.off::after { left: 3px; }
+
+  /* ===== Table ===== */
+  table { width: 100%; border-collapse: collapse; }
+  thead { background: var(--bg-light); }
+  th { text-align: left; padding: var(--sp-3) var(--sp-4); font-weight: 500; color: var(--text-3); border-bottom: 1px solid var(--line-d); }
+  td { padding: 14px var(--sp-4); border-bottom: 1px solid var(--line-l); color: var(--text-1); }
+  th, td { font-size: 13px; line-height: 19.5px; letter-spacing: var(--ls); }
+  tbody tr { cursor: pointer; transition: background 0.1s; }
+  tbody tr:hover { background: var(--bg-light); }
+  tbody tr.selected { background: var(--accent-sub); }
+  .star { color: var(--line-d); cursor: pointer; font-size: 16px; }
+  .star.active { color: #fbbf24; }
+  .check-done { color: var(--accent); }
+  .ext-link { color: var(--text-off); }
+
+  /* ===== Pagination ===== */
+  .pagination { display: flex; justify-content: center; gap: var(--sp-1); margin-top: var(--sp-6); }
+  .pg { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: var(--r-md); cursor: pointer; color: var(--text-3); border: none; background: none; font-family: var(--font); }
+  .pg:hover { background: var(--bg-gray); }
+  .pg.active { background: var(--black); color: #fff; }
+
+  /* ===== Upload ===== */
+  .doc-icon { width: 24px; height: 24px; background: var(--accent-sub); border-radius: var(--r-sm); display: inline-flex; align-items: center; justify-content: center; color: var(--accent); font-size: 11px; margin-right: var(--sp-2); vertical-align: middle; }
+  .drop-zone { border: 2px dashed var(--line-d); border-radius: var(--r-2xl); padding: var(--sp-12); text-align: center; color: var(--text-off); cursor: pointer; transition: all 0.2s; }
+  .drop-zone:hover { border-color: var(--accent); background: var(--accent-sub); }
+  .drop-zone .up-icon { font-size: 28px; margin-bottom: var(--sp-3); color: var(--line-d); }
+
+  /* ===== Image Selection ===== */
+  .selected-badge { display: inline-flex; align-items: center; gap: var(--sp-1); padding: 6px 14px; border-radius: var(--r-full); background: var(--accent-sub); color: var(--accent); margin-bottom: var(--sp-5); }
+  .img-title { color: var(--accent); font-weight: 500; }
+  .img-title.off { color: var(--text-1); }
+  .img-input { width: 100%; padding: 10px var(--sp-3); border: 1px solid var(--line-d); border-radius: var(--r-lg); font-size: 13px; letter-spacing: var(--ls); font-family: var(--font); transition: border-color 0.15s; }
+  .img-input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 2px rgba(44,129,252,0.12); }
+  .img-input.active { border-color: var(--accent); }
+  /* DS IconButton (text variant) */
+  .icon-btn-text { width: 32px; height: 32px; border-radius: var(--r-lg); border: none; background: transparent; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-off); transition: all 0.15s; }
+  .icon-btn-text:hover { background: var(--bg-gray); color: var(--text-2); }
+  .add-link { color: var(--accent); cursor: pointer; margin-top: var(--sp-4); display: inline-block; font-weight: 500; }
+  .add-link:hover { text-decoration: underline; }
+
+  /* ===== Settings ===== */
+  .setting-card { background: var(--bg-white); border: 1px solid var(--line-l); border-radius: var(--r-2xl); padding: var(--sp-8); margin-bottom: var(--sp-6); }
+  .kodata-row { display: flex; justify-content: space-between; align-items: center; padding: var(--sp-4) var(--sp-5); background: var(--bg-light); border-radius: var(--r-lg); margin-bottom: var(--sp-6); }
+  .style-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-4); margin-bottom: var(--sp-5); }
+  .style-field label { display: block; margin-bottom: var(--sp-1); color: var(--text-off); }
+  .preview-box { border: 1px solid var(--line-l); border-radius: var(--r-lg); padding: var(--sp-6); margin-top: var(--sp-4); background: var(--bg-light); }
+  .preview-h1 { font-size: 18px; font-weight: 700; color: var(--text-3); margin-bottom: var(--sp-2); }
+  .preview-h2 { font-size: 15px; font-weight: 600; color: var(--text-off); padding-left: var(--sp-3); margin-bottom: var(--sp-1); }
+  .preview-body { font-size: 13px; color: var(--text-off); padding-left: var(--sp-6); margin-bottom: var(--sp-1); }
+  .preview-caption { font-size: 12px; color: var(--text-off); padding-left: var(--sp-6); }
+  .beta-section { background: var(--bg-light); border-radius: var(--r-lg); padding: var(--sp-5) var(--sp-6); display: flex; justify-content: space-between; align-items: center; }
+
+  /* ===== Generating ===== */
+  .gen-center { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 500px; }
+  .spinner { width: 48px; height: 48px; border: 3px solid var(--line-l); border-top-color: var(--accent); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: var(--sp-6); }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .gen-steps { display: flex; flex-direction: column; gap: 14px; }
+  .gen-step { display: flex; align-items: center; gap: var(--sp-3); }
+  .gen-circle { width: 24px; height: 24px; border-radius: var(--r-full); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; }
+  .gen-circle.done { background: var(--accent); color: #fff; }
+  .gen-circle.active { background: #fff; border: 2px solid var(--accent); color: var(--accent); }
+  .gen-circle.pending { background: var(--bg-gray); color: var(--text-off); }
+
+  /* ===== Loading Popup (Figma 팝업 재현) ===== */
+  .loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(37,38,44,0.3); display: flex; align-items: center; justify-content: center; z-index: 200; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
+  .loading-overlay.show { opacity: 1; pointer-events: auto; }
+  .loading-popup { background: var(--bg-white); border-radius: var(--r-2xl); padding: var(--sp-10) var(--sp-10) var(--sp-8); width: 520px; box-shadow: var(--sh-md); text-align: center; }
+  .loading-spinner-ring { width: 48px; height: 48px; border: 3px solid var(--line-l); border-top-color: var(--accent); border-radius: 50%; margin: 0 auto var(--sp-6); animation: spin 1s linear infinite; }
+  .loading-steps { text-align: left; margin-top: var(--sp-6); display: flex; flex-direction: column; gap: var(--sp-3); padding: 0 var(--sp-5); }
+  .loading-step { display: flex; align-items: center; gap: var(--sp-3); }
+  .loading-dot { width: 20px; height: 20px; border-radius: var(--r-full); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .loading-dot.done { background: var(--accent); }
+  .loading-dot.active { border: 2px solid var(--accent); background: var(--bg-white); animation: pulse 1.5s ease infinite; }
+  .loading-dot.pending { background: var(--bg-gray); }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.5; } }
+
+  /* ===== Toast ===== */
+  .toast { position: fixed; bottom: var(--sp-6); left: 50%; transform: translateX(-50%) translateY(80px); background: var(--black); color: #fff; padding: var(--sp-3) var(--sp-6); border-radius: var(--r-lg); opacity: 0; transition: all 0.3s; z-index: 100; pointer-events: none; box-shadow: var(--sh-md); }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+</style>
+<script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
+</head>
+<body>
+
+<div class="app">
+  <div class="main">
+    <div class="stepper-bar" id="stepper-bar"></div>
+    <div class="content-area">
+
+      <!-- STEP 1 -->
+      <div class="step-content" id="step-1">
+        <div class="page-title t-sb-24">지원사업 & 사업계획서</div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:var(--sp-5);gap:var(--sp-4);">
+          <input class="ds-input search" placeholder="지원사업명 검색" style="max-width:440px;" />
+          <div style="display:flex;gap:var(--sp-2);align-items:center;">
+            <button class="btn btn-outlined btn-sm"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:4px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>양식 직접 업로드</button>
+            <label class="t-rg-13" style="cursor:pointer;color:var(--text-3);display:flex;align-items:center;gap:4px;"><input type="checkbox" class="ds-check" checked />지원가능한 사업만 보기</label>
+          </div>
+        </div>
+        <table>
+          <thead><tr><th style="width:50px">관심</th><th>사업명</th><th style="width:130px">마감일시</th><th style="width:50px"></th><th style="width:100px">주관기관</th><th style="width:40px"></th></tr></thead>
+          <tbody id="biz-table"></tbody>
+        </table>
+        <div class="pagination">
+          <span class="pg t-rg-14">&lsaquo;</span>
+          <span class="pg active t-rg-14">1</span><span class="pg t-rg-14">2</span><span class="pg t-rg-14">3</span><span class="pg t-rg-14">4</span><span class="pg t-rg-14">5</span>
+          <span class="pg t-rg-14">&rsaquo;</span>
+        </div>
+        <p class="t-rg-13" style="text-align:center;margin-top:var(--sp-4);color:var(--text-off);">원하는 양식이 없으신가요? <a href="#" style="color:var(--accent);">양식 신청하기</a></p>
+      </div>
+
+      <!-- STEP 2 -->
+      <div class="step-content" id="step-2">
+        <div class="centered">
+          <div class="step-title t-sb-20"><span class="hl selected-name"></span><br/>사업계획서 작성을 위한 프롬프트를 입력해주세요</div>
+          <div class="info-banner t-rg-13"><span class="ic">&#x24D8;</span> 프롬프트를 간단히 입력하거나, AI 심사역과 함께 고도화하는 단계입니다. 단계를 건너뛸 수 있습니다.</div>
+          <div class="ds-seg" style="margin-bottom:var(--sp-5);">
+            <button class="ds-seg-item active t-md-14" id="tab-idea" onclick="switchPromptTab('idea')">아이디어 모드</button>
+            <button class="ds-seg-item t-md-14" id="tab-ai" onclick="switchPromptTab('ai')">AI 심사역과 함께</button>
+          </div>
+          <!-- 아이디어 모드 -->
+          <div id="prompt-idea">
+            <textarea class="ds-textarea" placeholder="자유롭게 아이템 내용을 입력할 수 있습니다.&#10;프롬프트 작성이 막막하다면 'AI 심사역과 함께' 진행해보세요."></textarea>
+          </div>
+          <!-- AI 심사역 모드 -->
+          <div id="prompt-ai" style="display:none;width:100%;">
+            <div id="ai-questions" style="display:flex;flex-direction:column;gap:var(--sp-6);width:100%;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 3 -->
+      <div class="step-content" id="step-3">
+        <div class="centered">
+          <div class="step-title t-sb-20"><span class="hl selected-name"></span><br/>사업계획서 작성을 위한 자료를 업로드해주세요</div>
+          <div class="info-banner t-rg-13"><span class="ic">&#x24D8;</span> 기존에 만들었던 다른 사업계획서 파일 혹은 이외 파일들을 업로드하는 단계입니다. 단계를 건너뛸 수 있습니다.</div>
+          <div class="section-title t-sb-16">기존 작성 문서 불러오기</div>
+          <table>
+            <thead><tr><th style="width:50px">관심</th><th>문서명</th><th>아이템명</th><th style="width:130px">생성 일시</th><th style="width:100px"></th></tr></thead>
+            <tbody id="doc-table"></tbody>
+          </table>
+          <div class="pagination" style="margin-bottom:var(--sp-8);"><span class="pg">&lsaquo;</span><span class="pg active">1</span><span class="pg">2</span><span class="pg">3</span><span class="pg">&rsaquo;</span></div>
+          <div class="section-title t-sb-16">파일 업로드하기</div>
+          <div class="drop-zone">
+            <div class="up-icon">&#x2B06;</div>
+            <div class="t-rg-14">클릭하여 파일을 선택하거나 여기로 드래그해주세요</div>
+            <div class="t-rg-12" style="color:var(--text-off);margin-top:var(--sp-2);">(pdf, docx, hwp, hwpx에 한하여 30mb 이내 3개까지 첨부 가능)</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 4 -->
+      <div class="step-content" id="step-4">
+        <div class="wide">
+          <div class="step-title t-sb-20"><span class="hl selected-name"></span><br/>사업계획서 시각 자료(이미지) 구성</div>
+          <div class="info-banner t-rg-13"><span class="ic">&#x24D8;</span> 선택하신 양식과 입력하신 프롬프트를 기반으로 필요한 이미지 리스트를 AI가 추천합니다.</div>
+          <div class="desc-text t-rg-13">이미지는 최대 8장까지 선택할 수 있습니다. 고객이 직접 항목을 추가하거나 프롬프트를 수정할 수 있습니다.</div>
+          <div class="selected-badge t-md-13" id="img-count">선택된 이미지: 3 / 8</div>
+          <table>
+            <thead><tr><th style="width:50px">선택</th><th style="width:150px">이미지 제목</th><th>생성 프롬프트 (AI에게 내리는 명령)</th><th style="width:60px"></th></tr></thead>
+            <tbody id="img-table"></tbody>
+          </table>
+          <a class="add-link t-md-14" onclick="addNewImage()">+ 새로운 이미지 항목 추가</a>
+        </div>
+      </div>
+
+      <!-- STEP 5 -->
+      <div class="step-content" id="step-5">
+        <div class="centered">
+          <div class="page-title t-sb-24">문서 생성 세부 설정</div>
+          <div class="info-banner t-rg-13"><span class="ic">&#x24D8;</span> 완벽한 사업계획서를 위해 문서의 스타일과 데이터 연동 옵션을 확인해주세요.</div>
+          <div class="section-title t-sb-16">기업 정보 자동 적용 (KODATA 연동)</div>
+          <div class="kodata-row">
+            <div class="t-rg-14" style="color:var(--text-2);">저장된 기업 정보를 바탕으로 재무지표, 인력 현황을 자동 기입합니다.</div>
+            <div style="display:flex;align-items:center;gap:var(--sp-2);"><span class="t-md-13" style="color:var(--accent);">적용 중</span><span class="ds-toggle on" onclick="this.classList.toggle('on');this.classList.toggle('off')"></span></div>
+          </div>
+          <div class="setting-card">
+            <div class="t-sb-18" style="margin-bottom:var(--sp-2);">문서 스타일</div>
+            <div class="t-rg-13" style="color:var(--text-off);margin-bottom:var(--sp-5);">문서 전체에 적용되는 스타일을 설정합니다</div>
+            <div class="ds-seg" style="margin-bottom:var(--sp-6);" id="style-tabs">
+              <button class="ds-seg-item active t-md-14" onclick="selectStyleTab(this)">대제목</button>
+              <button class="ds-seg-item t-md-14" onclick="selectStyleTab(this)">소제목</button>
+              <button class="ds-seg-item t-md-14" onclick="selectStyleTab(this)">본문</button>
+              <button class="ds-seg-item t-md-14" onclick="selectStyleTab(this)">캡션</button>
+            </div>
+            <div class="style-grid">
+              <div class="style-field"><label class="t-rg-12">크기</label><select class="ds-select"><option>선택</option><option>11pt</option><option>14pt</option><option>18pt</option><option>24pt</option></select></div>
+              <div class="style-field"><label class="t-rg-12">굵기</label><select class="ds-select"><option>선택</option><option>Regular</option><option>Medium</option><option>Bold</option></select></div>
+              <div class="style-field"><label class="t-rg-12">줄간격</label><select class="ds-select"><option>선택</option><option>1.0</option><option>1.5</option><option>2.0</option></select></div>
+              <div class="style-field"><label class="t-rg-12">글머리 기호</label><select class="ds-select"><option>선택</option><option>없음</option><option>- (대시)</option><option>• (불릿)</option></select></div>
+              <div class="style-field"><label class="t-rg-12">문단 위 간격</label><select class="ds-select"><option>선택</option><option>0pt</option><option>6pt</option><option>12pt</option></select></div>
+              <div class="style-field"><label class="t-rg-12">문단 아래 간격</label><select class="ds-select"><option>선택</option><option>0pt</option><option>6pt</option><option>12pt</option></select></div>
+            </div>
+            <div><label class="t-rg-12" style="color:var(--text-off);">서식</label><button class="btn btn-outlined btn-sm" style="margin-top:var(--sp-1);font-weight:700;">B</button></div>
+            <div style="margin-top:var(--sp-6);">
+              <label class="t-rg-12" style="color:var(--text-off);">미리보기</label>
+              <div class="preview-box">
+                <div class="preview-h1">대제목을 입력하세요</div>
+                <div class="preview-h2">○ 부제목을 입력하세요</div>
+                <div class="preview-body">- 본문 텍스트를 입력하세요</div>
+                <div class="preview-caption">* 캡션을 입력하세요</div>
+              </div>
+              <p class="t-rg-12" style="color:var(--text-off);text-align:center;margin-top:var(--sp-3);">미리보기는 실제와 다를 수 있으며, 내려받은 파일에는 정상 적용됩니다.</p>
+              <div style="display:flex;justify-content:flex-end;margin-top:var(--sp-3);"><button class="btn btn-outlined btn-sm">기본값 초기화</button></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 6 -->
+      <div class="step-content" id="step-6">
+        <div class="gen-center">
+          <div class="spinner"></div>
+          <div class="t-sb-20" style="margin-bottom:var(--sp-3);">사업계획서를 생성하고 있습니다</div>
+          <div class="t-rg-14" style="color:var(--text-off);text-align:center;line-height:1.6;margin-bottom:var(--sp-8);">양식과 프롬프트를 분석하여<br/>사업계획서를 생성 중입니다.</div>
+          <div class="gen-steps" id="gen-steps-container"></div>
+        </div>
+      </div>
+
+    </div>
+    <div class="footer" id="footer"></div>
+  </div>
+</div>
+
+<!-- Loading Popup -->
+<div class="loading-overlay" id="loading-overlay">
+  <div class="loading-popup">
+    <div class="loading-spinner-ring"></div>
+    <div class="t-sb-20" style="margin-bottom:var(--sp-2);">시각 자료를 구성하고 있습니다</div>
+    <div class="t-rg-14" style="color:var(--text-3);line-height:1.6;">양식과 프롬프트를 분석하여<br/>사업계획서에 필요한 이미지 리스트를 생성 중입니다.</div>
+    <div class="loading-steps" id="loading-steps"></div>
+  </div>
+</div>
+
+<div class="toast t-rg-14" id="toast"></div>
+
+<script>
+let currentStep = 1;
+let selectedBiz = null;
+
+const STEPS = [{label:'양식 선택'},{label:'프롬프트'},{label:'자료 업로드'},{label:'이미지 선택'},{label:'설정'},{label:'생성'}];
+const BIZ_DATA = [
+  {name:'2026년도 중소기업 동반성장 네트워크론 지원계획 공고',date:'26.11.12 18:00',dday:'D-1',ddayType:'warning',org:'창업진흥원',star:true},
+  {name:'2026년도 중소기업 매출채권팩토링 지원계획 공고',date:'26.11.12 18:00',dday:'D-4',ddayType:'warning',org:'창업진흥원',star:false},
+  {name:'GSAT 2026 G-Pitch (IR 경진대회) 참가기업 모집 공고',date:'26.11.12 18:00',dday:'D-7',ddayType:'warning',org:'창업진흥원',star:false},
+  {name:'2026년 1차 혁신형 중소기업 방송광고 활성화 지원사업 모집 공고',date:'26.11.12 18:00',dday:'D-10',ddayType:'neutral',org:'창업진흥원',star:false},
+  {name:'2026년 건강일터 조성지원(환기장치 설치비용) 사업 공고',date:'26.11.12 18:00',dday:'D-11',ddayType:'neutral',org:'창업진흥원',star:false},
+  {name:'AI프롬프트 데이터기반 마케팅 전략기획전문가 양성과정 훈련생 모집',date:'26.11.12 18:00',dday:'D-15',ddayType:'neutral',org:'창업진흥원',star:false},
+  {name:'서울바이오허브 2026 BIO USA 창업기업 모집 공고',date:'26.11.12 18:00',dday:'D-24',ddayType:'neutral',org:'창업진흥원',star:false},
+];
+const IMG_DATA = [
+  {title:'비즈니스 모델 (BM)',prompt:'독스헌트의 B2B 구독 및 건당 결제 수익 구조를 보여주는 화살표 도식',checked:true},
+  {title:'시장 규모 (3단계)',prompt:'국내 행정 문서 시장(3조) → 지원사업(6천억) → 초기창업(500억) 거꾸로 깔때기',checked:true},
+  {title:'경쟁사 비교',prompt:'범용 AI(ChatGPT) 및 기존 대행 서비스 대비 독스헌트의 HWPX 보존 및 비용 우위 표',checked:true},
+  {title:'성장 로드맵 (3년)',prompt:'1년차(MVP 완료) → 2년차(매출 5억) → 3년차(B2B 확장) 타임라인 화살표',checked:true},
+  {title:'서비스 플로우',prompt:'양식 업로드 → 프롬프트 입력 → AI 생성 → 다운로드 4단계 플로우차트',checked:true},
+  {title:'팀 구성도',prompt:'CEO, CTO, 개발팀, 마케팅팀 역할과 경력을 보여주는 조직도',checked:true},
+];
+
+function renderStepper() {
+  const bar = document.getElementById('stepper-bar');
+  const isLast = currentStep===6;
+  let html = `<div class="stepper">`;
+  STEPS.forEach((s,i) => {
+    const n=i+1, state = n<currentStep?'done':n===currentStep?'active':'pending';
+    html += `<div class="step" onclick="goToStep(${n})"><div class="step-circle ${state}">${state==='done'?'✓':n}</div><div class="step-name ${state}">${s.label}</div></div>`;
+    if(i<5) html += `<div class="step-line ${n<currentStep?'done':'pending'}"></div>`;
+  });
+  bar.innerHTML = html+'</div>';
+}
+
+function renderFooter() {
+  const f = document.getElementById('footer');
+  if(currentStep===1) {
+    const ok = selectedBiz!==null;
+    f.innerHTML = `<div></div><div class="footer-right"><button class="btn ${ok?'btn-filled':'btn-disabled'} t-sb-14" onclick="${ok?'goNext()':''}" ${ok?'':'disabled'}>양식 선택 완료</button></div>`;
+  } else if(currentStep===6) {
+    f.innerHTML = `<div></div><div></div>`;
+  } else if(currentStep===5) {
+    f.innerHTML = `<button class="btn btn-outlined t-sb-14" onclick="goPrev()">이전 단계</button><div class="footer-right"><button class="btn btn-filled btn-lg t-sb-16" onclick="goNext()">사업계획서 생성 시작</button></div>`;
+  } else {
+    f.innerHTML = `<button class="btn btn-outlined t-sb-14" onclick="goPrev()">이전</button><div class="footer-right"><button class="btn btn-outlined t-sb-14" onclick="goNext()">건너뛰기</button><button class="btn btn-filled t-sb-14" onclick="goNext()">다음 단계</button></div>`;
+  }
+}
+
+function renderBizTable() {
+  document.getElementById('biz-table').innerHTML = BIZ_DATA.map((b,i) => `
+    <tr class="${selectedBiz===i?'selected':''}" onclick="selectBiz(${i})">
+      <td><span class="star ${b.star?'active':''}" onclick="event.stopPropagation();toggleStar(${i})"><svg width="16" height="16" viewBox="0 0 24 24" fill="${b.star?'#fbbf24':'none'}" stroke="${b.star?'#fbbf24':'var(--line-d)'}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span></td>
+      <td class="t-rg-14">${b.name} <span class="ext-link">↗</span></td>
+      <td class="t-rg-13">${b.date}</td>
+      <td><span class="ds-badge ${b.ddayType} t-sb-14">${b.dday}</span></td>
+      <td class="t-rg-13" style="color:var(--text-2)">${b.org}</td>
+      <td></td>
+    </tr>`).join('');
+}
+
+const DOC_DATA = [
+  {name:'초기창업패키지 2026년 사업계획서',item:'AI 행정문서 자동작성 플랫폼',date:'26.03.15 14:30',uploaded:false,draft:false,star:true},
+  {name:'예비창업패키지 최종본',item:'스마트 물류 관리 솔루션',date:'26.03.12 09:20',uploaded:false,draft:false,star:false},
+  {name:'초안생성파일',item:'친환경 포장재 유통 마켓플레이스',date:'26.02.28 16:45',uploaded:false,draft:true,star:false},
+  {name:'소셜벤처 육성사업 제안서',item:'시니어 건강관리 앱 서비스',date:'26.02.20 11:00',uploaded:false,draft:false,star:true},
+  {name:'초안생성파일',item:'블록체인 기반 전자계약 시스템',date:'26.01.15 10:30',uploaded:false,draft:true,star:false},
+];
+const docFileIcon = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></svg>';
+const draftFileIcon = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="m 9 15 2 2 4-4"/></svg>';
+
+function renderDocTable() {
+  document.getElementById('doc-table').innerHTML = DOC_DATA.map((doc, i) => `
+    <tr>
+      <td><span class="star ${doc.star?'active':''}" onclick="event.stopPropagation();toggleDocStar(${i})" style="cursor:pointer;"><svg width="16" height="16" viewBox="0 0 24 24" fill="${doc.star?'#fbbf24':'none'}" stroke="${doc.star?'#fbbf24':'var(--line-d)'}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span></td>
+      <td class="t-rg-14"><span class="doc-icon" ${doc.draft?'style="background:var(--accent-sub);color:var(--accent);"':''}>${doc.draft?draftFileIcon:docFileIcon}</span>${doc.name}</td>
+      <td class="t-rg-13" style="color:var(--text-3)">${doc.item}</td>
+      <td class="t-rg-13">${doc.date}</td>
+      <td><button class="btn ${doc.uploaded?'btn-filled':'btn-outlined'} btn-sm t-md-13" onclick="event.stopPropagation();toggleDocUpload(${i})">업로드</button></td>
+    </tr>`).join('');
+}
+
+function toggleDocStar(i) {
+  DOC_DATA[i].star = !DOC_DATA[i].star;
+  renderDocTable();
+}
+
+function toggleDocUpload(i) {
+  const wasUploaded = DOC_DATA[i].uploaded;
+  DOC_DATA.forEach((d,j) => d.uploaded = false);
+  if(!wasUploaded) DOC_DATA[i].uploaded = true;
+  renderDocTable();
+  toast(DOC_DATA[i].uploaded ? `'${DOC_DATA[i].name}' 선택됨` : '선택이 해제되었습니다');
+}
+
+function renderImgTable() {
+  document.getElementById('img-table').innerHTML = IMG_DATA.map((img,i) => `
+    <tr>
+      <td><input type="checkbox" class="ds-check" ${img.checked?'checked':''} onchange="toggleImg(${i})" /></td>
+      <td class="${img.checked?'img-title':'img-title off'} t-md-14">${img.title}</td>
+      <td><input class="img-input ${img.checked?'active':''}" value="${img.prompt}" /></td>
+      <td><button class="icon-btn-text" title="삭제" onclick="removeImg(${i})"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button></td>
+    </tr>`).join('');
+  document.getElementById('img-count').innerHTML = `선택된 이미지: ${IMG_DATA.filter(i=>i.checked).length} / 8`;
+}
+
+const AI_QUESTIONS = [
+  {num:'1', title:'Problem: 고객이 겪고 있는 가장 큰 고통, Pain Point가 무엇인가요?', placeholder:'누구에게, 어떤 상황에서 발생하는 문제인가요?'},
+  {num:'2', title:'Solution: 우리만의 차별화된 해결 방식은 무엇인가요?', placeholder:'어떤 기능이나 서비스로 고객의 고통을 없애주나요? 기존 방식보다 무엇이 더 좋아지나요?'},
+  {num:'3', title:'Target: 우리 서비스에 가장 먼저 돈을 지불할 핵심 타겟은 누구인가요?', placeholder:'연령, 직업, 라이프스타일 혹은 기업 규모와 업종을 키워드로 입력하세요. (예: 30대 남성 직장인, 연 매출 10억 이하 IT 스타트업)'},
+  {num:'4', title:'Competitor: 우리가 넘어서야 할 경쟁사는 누구인가요?', placeholder:'경쟁사 이름은 적어주셔도, 좋아요. 일반적 고객이 지금 대신 사용 중인 도구나 방법을 적어주세요.'},
+  {num:'5', title:'Market: 우리가 뛰어 이길 시장은 어디인가요?', placeholder:'전체 이 서비스를 필요로 하는 사람들이 얼마나 많은지, 혹은 전체 시장의 규모나 성격(예: 국내 SaaS 시장, 에듀테크 시장 현황을 아는 대로 적어주세요.'},
+  {num:'6', title:'Traction: 지금까지 어떤 유의미한 성과나 지표를 만들었나요?', placeholder:'매출, 유저 수, PoC(테스트) 결과, 수상 실적, 협약 체결 등 의미있는 의미 있는 수치를 적어주세요. 아직 없다면 제품 개발 중이라고 적으셔도 됩니다.'},
+  {num:'7', title:'Strategy: 시장에 어떻게 진입하고 고객을 모을 건가요?', placeholder:'어떤 핵심(SNS, 콜드메일, 커뮤니티, 영업 채널)을 통해 고객을 만날 건가요? 초기 100명의 고객을 어떻게 모을지 생각하는 대로 적어주세요.'},
+  {num:'8', title:'Business Model: 어떻게 돈을 벌고 성장하며 지속 가능할 수 있나요?', placeholder:'구독료, 수수료 등 과금 방식을 적어주세요.'},
+  {num:'9', title:'Milestone: 앞으로의 주요 목표와 일정은 어떻게 되나요?', placeholder:'제품 출시, 특정 매출 달성, 투자 유치 등 가장 중요한 이벤트를 시기와 함께 적어주세요.'},
+];
+
+function switchPromptTab(tab) {
+  const ideaTab = document.getElementById('tab-idea');
+  const aiTab = document.getElementById('tab-ai');
+  const ideaContent = document.getElementById('prompt-idea');
+  const aiContent = document.getElementById('prompt-ai');
+  if(tab==='idea') {
+    ideaTab.classList.add('active'); aiTab.classList.remove('active');
+    ideaContent.style.display='block'; aiContent.style.display='none';
+  } else {
+    aiTab.classList.add('active'); ideaTab.classList.remove('active');
+    aiContent.style.display='block'; ideaContent.style.display='none';
+    renderAiQuestions();
+  }
+}
+
+function renderAiQuestions() {
+  const container = document.getElementById('ai-questions');
+  if(!container) return;
+  container.innerHTML = AI_QUESTIONS.map(q => `
+    <div style="display:flex;flex-direction:column;gap:var(--sp-2);">
+      <div class="t-sb-14" style="color:var(--text-1);">${q.num}. ${q.title}</div>
+      <div style="position:relative;">
+        <textarea class="ds-textarea" style="min-height:120px;" placeholder="${q.placeholder}"></textarea>
+        ${q.num==='1'?'<span class="t-rg-12" style="position:absolute;bottom:12px;right:14px;color:var(--text-off);display:flex;align-items:center;gap:4px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m 21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2.36 18.64a1.21 1.21 0 0 0 0 1.72l1.28 1.28a1.21 1.21 0 0 0 1.72 0L21.64 5.36a1.21 1.21 0 0 0 0-1.72Z"/><path d="m14 7 3 3"/></svg> AI 심사역</span>':''}
+      </div>
+    </div>
+  `).join('');
+}
+
+function goToStep(n) { if(n<currentStep) { currentStep=n; render(); } }
+function goHome() { currentStep=1; selectedBiz=null; render(); renderBizTable(); toast('처음으로 돌아왔습니다'); }
+function goNext() {
+  if(currentStep>=6) return;
+  if(currentStep===3) { showImageLoading(); return; }
+  currentStep++; render();
+}
+
+function showImageLoading() {
+  const overlay = document.getElementById('loading-overlay');
+  const stepsEl = document.getElementById('loading-steps');
+  const loadSteps = ['양식 분석','프롬프트 분석','이미지 항목 및 프롬프트 생성 중...','추천 이미지 리스트 정리'];
+  let current = 0;
+  overlay.classList.add('show');
+
+  function updateLoadingSteps() {
+    stepsEl.innerHTML = loadSteps.map((label,i) => {
+      const s = i<current?'done':i===current?'active':'pending';
+      return `<div class="loading-step">
+        <div class="loading-dot ${s}">${s==='done'?'<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg>':''}</div>
+        <span class="t-rg-14" style="color:${s==='pending'?'var(--text-off)':'var(--text-1)'}; ${s==='active'?'font-weight:500;':''}">${label}</span>
+      </div>`;
+    }).join('');
+  }
+
+  updateLoadingSteps();
+  const interval = setInterval(() => {
+    current++;
+    updateLoadingSteps();
+    if(current >= loadSteps.length) {
+      clearInterval(interval);
+      setTimeout(() => {
+        overlay.classList.remove('show');
+        currentStep = 4;
+        render();
+        toast('이미지 리스트가 생성되었습니다');
+      }, 800);
+    }
+  }, 1200);
+}
+function goPrev() { if(currentStep>1) { currentStep--; render(); } }
+function selectBiz(i) { selectedBiz = selectedBiz===i?null:i; renderBizTable(); renderFooter(); updateSelectedName(); if(selectedBiz!==null) toast(`'${BIZ_DATA[i].name.substring(0,25)}...' 양식 선택됨`); }
+function toggleStar(i) { BIZ_DATA[i].star=!BIZ_DATA[i].star; renderBizTable(); }
+function toggleImg(i) { IMG_DATA[i].checked=!IMG_DATA[i].checked; renderImgTable(); }
+function addNewImage() {
+  if(IMG_DATA.length >= 8) { toast('이미지는 최대 8장까지 선택할 수 있습니다'); return; }
+  IMG_DATA.push({title:'새 이미지 ' + (IMG_DATA.length+1), prompt:'', checked:true});
+  renderImgTable();
+  toast('새 이미지 항목이 추가되었습니다');
+}
+function removeImg(i) {
+  IMG_DATA.splice(i, 1);
+  renderImgTable();
+  toast('이미지 항목이 삭제되었습니다');
+}
+function selectStyleTab(el) { el.parentElement.querySelectorAll('.ds-seg-item').forEach(t=>t.classList.remove('active')); el.classList.add('active'); }
+function toast(msg) { const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2000); }
+
+function updateSelectedName() {
+  const name = selectedBiz !== null ? `'${BIZ_DATA[selectedBiz].name}'` : "'양식을 선택해주세요'";
+  document.querySelectorAll('.selected-name').forEach(el => el.textContent = name);
+}
+
+const GEN_STEPS = ['양식 분석','프롬프트 분석','문서 본문 생성 중...','이미지 생성','최종 검토 및 파일 생성'];
+let genInterval = null;
+
+function startGenAnimation() {
+  let current = 0;
+  const container = document.getElementById('gen-steps-container');
+  if(!container) return;
+
+  function updateGen() {
+    container.innerHTML = GEN_STEPS.map((label,i) => {
+      const s = i<current?'done':i===current?'active':'pending';
+      return `<div class="gen-step ${s==='active'?'t-md-14':'t-rg-14'}">
+        <div class="gen-circle ${s}">${s==='done'?'<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg>':s==='active'?'<div class="loading-dot active" style="width:14px;height:14px;border:none;background:none;"></div>':i+1}</div>
+        <span style="color:${s==='pending'?'var(--text-off)':'var(--text-1)'}">${label}</span>
+      </div>`;
+    }).join('');
+  }
+
+  updateGen();
+  genInterval = setInterval(() => {
+    current++;
+    if(current >= GEN_STEPS.length) {
+      clearInterval(genInterval);
+      genInterval = null;
+      current = GEN_STEPS.length;
+      updateGen();
+      updateGen();
+      updateGen();
+      setTimeout(() => {
+        const center = document.querySelector('#step-6 .gen-center');
+        if(center) {
+          center.innerHTML = `
+            <div style="width:48px;height:48px;border-radius:var(--r-full);background:var(--accent);display:flex;align-items:center;justify-content:center;margin-bottom:var(--sp-6);">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+            </div>
+            <div class="t-sb-20" style="margin-bottom:var(--sp-3);">사업계획서 생성이 완료되었습니다</div>
+            <div class="t-rg-14" style="color:var(--text-off);text-align:center;line-height:1.6;margin-bottom:var(--sp-8);">작성된 사업계획서를 확인하고 다운로드할 수 있습니다.</div>
+            <button class="btn btn-filled btn-lg t-sb-16" onclick="toast('다운로드를 시작합니다')">사업계획서 다운로드</button>
+          `;
+        }
+        const footer = document.getElementById('footer');
+        footer.innerHTML = `<div></div><div class="footer-right"><button class="btn btn-outlined t-sb-14" onclick="goHome()">처음으로</button></div>`;
+        toast('사업계획서 생성이 완료되었습니다');
+      }, 500);
+      return;
+    }
+    updateGen();
+  }, 2000);
+}
+
+function stopGenAnimation() {
+  if(genInterval) { clearInterval(genInterval); genInterval = null; }
+}
+
+function render() {
+  stopGenAnimation();
+  document.querySelectorAll('.step-content').forEach(el=>el.classList.remove('active'));
+  document.getElementById(`step-${currentStep}`).classList.add('active');
+  renderStepper(); renderFooter(); updateSelectedName();
+  document.querySelector('.content-area').scrollTop = 0;
+  if(currentStep===6) setTimeout(startGenAnimation, 300);
+}
+
+renderBizTable(); renderDocTable(); renderImgTable(); render();
+
+const urlParams = new URLSearchParams(window.location.search);
+const stepParam = urlParams.get('step');
+if(stepParam) { currentStep = parseInt(stepParam); render(); }
+</script>
+</body>
+</html>
