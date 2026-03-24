@@ -109,6 +109,9 @@
   .btn-lg { padding: 14px var(--sp-8); font-size: 16px; line-height: 24px; }
   .btn-sm { padding: 6px var(--sp-4); font-size: 13px; line-height: 19.5px; }
   .btn-disabled { background: var(--bg-gray); color: var(--text-off); cursor: not-allowed; border: none; }
+  .btn-primary { background: var(--accent); color: #fff; border: none; cursor: pointer; }
+  .btn-primary:hover { background: var(--accent-dark); }
+  .btn-primary:disabled { background: var(--bg-gray); color: var(--text-off); cursor: not-allowed; }
 
   /* ===== DS Typography ===== */
   .t-sb-32 { font-size: 32px; line-height: 42px; font-weight: 600; letter-spacing: var(--ls); }
@@ -247,6 +250,44 @@
   .loading-dot.pending { background: var(--bg-gray); }
   @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.5; } }
 
+  /* ===== Upload Modal ===== */
+  .upload-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(37,38,44,0.3); display: flex; align-items: center; justify-content: center; z-index: 200; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
+  .upload-overlay.show { opacity: 1; pointer-events: auto; }
+  .upload-modal { background: var(--bg-white); border-radius: var(--r-2xl); padding: var(--sp-8); width: 520px; box-shadow: var(--sh-md); }
+  .upload-modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--sp-5); }
+  .upload-modal-close { background: none; border: none; cursor: pointer; color: var(--text-3); padding: 4px; border-radius: var(--r-sm); }
+  .upload-modal-close:hover { background: var(--bg-gray); }
+  .upload-dropzone { border: 2px dashed var(--line-d); border-radius: var(--r-lg); padding: var(--sp-10) var(--sp-6); text-align: center; cursor: pointer; transition: border-color 0.2s, background 0.2s; margin-bottom: var(--sp-5); }
+  .upload-dropzone:hover, .upload-dropzone.dragover { border-color: var(--accent); background: var(--accent-sub); }
+  .upload-dropzone-icon { width: 48px; height: 48px; background: var(--accent-sub); border-radius: var(--r-full); display: flex; align-items: center; justify-content: center; margin: 0 auto var(--sp-3); }
+  .upload-file-list { display: flex; flex-direction: column; gap: var(--sp-2); margin-bottom: var(--sp-5); max-height: 160px; overflow-y: auto; }
+  .upload-file-item { display: flex; align-items: center; gap: var(--sp-3); padding: var(--sp-3) var(--sp-4); background: var(--bg-light); border-radius: var(--r-md); }
+  .upload-file-item .file-icon { min-width: 40px; height: 32px; padding: 0 6px; background: var(--accent-sub); border-radius: var(--r-sm); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .upload-file-item .file-info { flex: 1; min-width: 0; }
+  .upload-file-item .file-name { font-size: 13px; font-weight: 500; color: var(--text-1); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .upload-file-item .file-size { font-size: 12px; color: var(--text-3); }
+  .upload-file-item .file-remove { background: none; border: none; cursor: pointer; color: var(--text-off); padding: 4px; border-radius: var(--r-sm); }
+  .upload-file-item .file-remove:hover { color: var(--warn); }
+  .upload-modal-footer { display: flex; justify-content: flex-end; gap: var(--sp-2); }
+
+  /* ===== Generic Modal (공용) ===== */
+  .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(37,38,44,0.3); display: flex; align-items: center; justify-content: center; z-index: 200; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
+  .modal-overlay.show { opacity: 1; pointer-events: auto; }
+  .modal-box { background: var(--bg-white); border-radius: var(--r-2xl); padding: var(--sp-8); width: 480px; box-shadow: var(--sh-md); }
+  .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--sp-4); }
+  .modal-close { background: none; border: none; cursor: pointer; color: var(--text-3); padding: 4px; border-radius: var(--r-sm); }
+  .modal-close:hover { background: var(--bg-gray); }
+  .modal-footer { display: flex; justify-content: flex-end; gap: var(--sp-2); margin-top: var(--sp-6); }
+  .modal-icon-circle { width: 56px; height: 56px; border-radius: var(--r-full); display: flex; align-items: center; justify-content: center; margin: 0 auto var(--sp-4); }
+  .modal-icon-circle.success { background: #E6F9EE; }
+  .modal-icon-circle.info { background: var(--accent-sub); }
+  .modal-icon-circle.warn { background: var(--warn-sub); }
+
+  /* ===== Request Form inside modal ===== */
+  .request-field { display: flex; flex-direction: column; gap: var(--sp-1); margin-bottom: var(--sp-4); }
+  .request-field label { font-size: 13px; font-weight: 500; color: var(--text-2); }
+  .request-field .required { color: var(--warn); }
+
   /* ===== Toast ===== */
   .toast { position: fixed; bottom: var(--sp-6); left: 50%; transform: translateX(-50%) translateY(80px); background: var(--black); color: #fff; padding: var(--sp-3) var(--sp-6); border-radius: var(--r-lg); opacity: 0; transition: all 0.3s; z-index: 100; pointer-events: none; box-shadow: var(--sh-md); }
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
@@ -266,7 +307,7 @@
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:var(--sp-5);gap:var(--sp-4);">
           <input class="ds-input search" placeholder="지원사업명 검색" style="max-width:440px;" />
           <div style="display:flex;gap:var(--sp-2);align-items:center;">
-            <button class="btn btn-outlined btn-sm"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:4px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>양식 직접 업로드</button>
+            <button class="btn btn-outlined btn-sm" onclick="openUploadModal()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:4px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>양식 직접 업로드</button>
             <label class="t-rg-13" style="cursor:pointer;color:var(--text-3);display:flex;align-items:center;gap:4px;"><input type="checkbox" class="ds-check" checked />지원가능한 사업만 보기</label>
           </div>
         </div>
@@ -279,7 +320,7 @@
           <span class="pg active t-rg-14">1</span><span class="pg t-rg-14">2</span><span class="pg t-rg-14">3</span><span class="pg t-rg-14">4</span><span class="pg t-rg-14">5</span>
           <span class="pg t-rg-14">&rsaquo;</span>
         </div>
-        <p class="t-rg-13" style="text-align:center;margin-top:var(--sp-4);color:var(--text-off);">원하는 양식이 없으신가요? <a href="#" style="color:var(--accent);">양식 신청하기</a></p>
+        <p class="t-rg-13" style="text-align:center;margin-top:var(--sp-4);color:var(--text-off);">원하는 양식이 없으신가요? <a href="#" style="color:var(--accent);" onclick="event.preventDefault();openModal('modal-request')">양식 신청하기</a></p>
       </div>
 
       <!-- STEP 2 -->
@@ -314,7 +355,7 @@
           </table>
           <div class="pagination" style="margin-bottom:var(--sp-8);"><span class="pg">&lsaquo;</span><span class="pg active">1</span><span class="pg">2</span><span class="pg">3</span><span class="pg">&rsaquo;</span></div>
           <div class="section-title t-sb-16">파일 업로드하기</div>
-          <div class="drop-zone">
+          <div class="drop-zone" onclick="openModal('modal-step3-upload')" style="cursor:pointer;">
             <div class="up-icon">&#x2B06;</div>
             <div class="t-rg-14">클릭하여 파일을 선택하거나 여기로 드래그해주세요</div>
             <div class="t-rg-12" style="color:var(--text-off);margin-top:var(--sp-2);">(pdf, docx, hwp, hwpx에 한하여 30mb 이내 3개까지 첨부 가능)</div>
@@ -374,7 +415,7 @@
                 <div class="preview-caption">* 캡션을 입력하세요</div>
               </div>
               <p class="t-rg-12" style="color:var(--text-off);text-align:center;margin-top:var(--sp-3);">미리보기는 실제와 다를 수 있으며, 내려받은 파일에는 정상 적용됩니다.</p>
-              <div style="display:flex;justify-content:flex-end;margin-top:var(--sp-3);"><button class="btn btn-outlined btn-sm">기본값 초기화</button></div>
+              <div style="display:flex;justify-content:flex-end;margin-top:var(--sp-3);"><button class="btn btn-outlined btn-sm" onclick="openModal('modal-reset')">기본값 초기화</button></div>
             </div>
           </div>
         </div>
@@ -402,6 +443,118 @@
     <div class="t-sb-20" style="margin-bottom:var(--sp-2);">시각 자료를 구성하고 있습니다</div>
     <div class="t-rg-14" style="color:var(--text-3);line-height:1.6;">양식과 프롬프트를 분석하여<br/>사업계획서에 필요한 이미지 리스트를 생성 중입니다.</div>
     <div class="loading-steps" id="loading-steps"></div>
+  </div>
+</div>
+
+<!-- Upload Modal -->
+<div class="upload-overlay" id="upload-overlay" onclick="if(event.target===this)closeUploadModal()">
+  <div class="upload-modal">
+    <div class="upload-modal-header">
+      <div class="t-sb-18">양식 직접 업로드</div>
+      <button class="upload-modal-close" onclick="closeUploadModal()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="t-rg-14" style="color:var(--text-3);margin-bottom:var(--sp-5);">사업계획서 양식 파일을 업로드하면 해당 양식 기반으로 문서가 생성됩니다.</div>
+    <div class="upload-dropzone" id="upload-dropzone" onclick="document.getElementById('upload-file-input').click()">
+      <div class="upload-dropzone-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg></div>
+      <div class="t-md-14" style="color:var(--text-1);margin-bottom:var(--sp-1);">클릭하여 파일을 선택하거나 여기로 드래그해주세요</div>
+      <div class="t-rg-13" style="color:var(--text-off);">hwp, hwpx, docx, pdf 파일 (최대 30MB)</div>
+    </div>
+    <input type="file" id="upload-file-input" accept=".hwp,.hwpx,.docx,.pdf" style="display:none" onchange="handleUploadFiles(this.files)" />
+    <div class="upload-file-list" id="upload-file-list"></div>
+    <div class="upload-modal-footer">
+      <button class="btn btn-outlined btn-md" onclick="closeUploadModal()">취소</button>
+      <button class="btn btn-primary btn-md" id="upload-confirm-btn" disabled onclick="confirmUpload()">업로드 완료</button>
+    </div>
+  </div>
+</div>
+
+<!-- 양식 신청 Modal -->
+<div class="modal-overlay" id="modal-request" onclick="if(event.target===this)closeModal('modal-request')">
+  <div class="modal-box" style="width:520px;">
+    <div class="modal-header">
+      <div class="t-sb-18">양식 신청하기</div>
+      <button class="modal-close" onclick="closeModal('modal-request')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="t-rg-14" style="color:var(--text-3);margin-bottom:var(--sp-5);">원하시는 지원사업 양식을 신청해주세요. 검토 후 보통 24시간 이내에 업로드됩니다.</div>
+    <div class="request-field">
+      <label>지원사업명</label>
+      <input class="ds-input" id="req-biz-name" placeholder="예: 2026년 예비창업패키지" />
+    </div>
+    <div class="request-field">
+      <label>공고 URL</label>
+      <input class="ds-input" id="req-url" placeholder="https://www.k-startup.go.kr/..." />
+    </div>
+    <div class="request-field">
+      <label>양식 파일 첨부 <span class="required">*</span></label>
+      <div class="upload-dropzone" id="req-dropzone" onclick="document.getElementById('req-file-input').click()" style="padding:var(--sp-6) var(--sp-4);">
+        <div class="upload-dropzone-icon" style="width:40px;height:40px;margin-bottom:var(--sp-2);"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg></div>
+        <div class="t-rg-13" style="color:var(--text-3);">클릭하거나 드래그하여 파일 첨부</div>
+        <div class="t-rg-12" style="color:var(--text-off);margin-top:2px;">hwp, hwpx, docx, pdf (최대 30MB)</div>
+      </div>
+      <input type="file" id="req-file-input" accept=".hwp,.hwpx,.docx,.pdf" style="display:none" onchange="handleReqFile(this.files)" />
+      <div class="upload-file-list" id="req-file-list" style="margin-top:var(--sp-2);margin-bottom:0;"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outlined btn-md" onclick="closeModal('modal-request')">취소</button>
+      <button class="btn btn-primary btn-md" id="req-submit-btn" disabled onclick="submitRequest()">신청하기</button>
+    </div>
+  </div>
+</div>
+
+<!-- 기본값 초기화 확인 Modal -->
+<div class="modal-overlay" id="modal-reset" onclick="if(event.target===this)closeModal('modal-reset')">
+  <div class="modal-box" style="width:400px;text-align:center;">
+    <div class="modal-icon-circle warn">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--warn)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+    </div>
+    <div class="t-sb-18" style="margin-bottom:var(--sp-2);">스타일을 초기화하시겠습니까?</div>
+    <div class="t-rg-14" style="color:var(--text-3);">모든 문서 스타일 설정이 기본값으로 되돌아갑니다.<br/>이 작업은 되돌릴 수 없습니다.</div>
+    <div class="modal-footer" style="justify-content:center;">
+      <button class="btn btn-outlined btn-md" onclick="closeModal('modal-reset')">취소</button>
+      <button class="btn btn-md" style="background:var(--warn);color:#fff;border:none;cursor:pointer;" onclick="confirmReset()">초기화</button>
+    </div>
+  </div>
+</div>
+
+<!-- 다운로드 성공 Modal -->
+<div class="modal-overlay" id="modal-download" onclick="if(event.target===this)closeModal('modal-download')">
+  <div class="modal-box" style="width:420px;text-align:center;">
+    <div class="modal-icon-circle success">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#22C55E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+    </div>
+    <div class="t-sb-18" style="margin-bottom:var(--sp-2);">사업계획서 다운로드 완료</div>
+    <div class="t-rg-14" style="color:var(--text-3);margin-bottom:var(--sp-1);">파일이 성공적으로 다운로드되었습니다.</div>
+    <div style="background:var(--bg-light);border-radius:var(--r-md);padding:var(--sp-3) var(--sp-4);display:inline-flex;align-items:center;gap:var(--sp-2);margin-top:var(--sp-4);">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      <span class="t-md-14" style="color:var(--text-1);">사업계획서_초안.hwpx</span>
+      <span class="t-rg-12" style="color:var(--text-off);">2.4 MB</span>
+    </div>
+    <div class="modal-footer" style="justify-content:center;">
+      <button class="btn btn-outlined btn-md" onclick="closeModal('modal-download');goHome()">처음으로</button>
+      <button class="btn btn-primary btn-md" onclick="closeModal('modal-download')">확인</button>
+    </div>
+  </div>
+</div>
+
+<!-- Step3 파일 업로드 Modal -->
+<div class="modal-overlay" id="modal-step3-upload" onclick="if(event.target===this)closeModal('modal-step3-upload')">
+  <div class="modal-box" style="width:520px;">
+    <div class="modal-header">
+      <div class="t-sb-18">참고 자료 업로드</div>
+      <button class="modal-close" onclick="closeModal('modal-step3-upload')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="t-rg-14" style="color:var(--text-3);margin-bottom:var(--sp-5);">기존에 작성한 사업계획서나 참고 자료를 업로드하세요. 최대 3개까지 첨부 가능합니다.</div>
+    <div class="upload-dropzone" id="step3-dropzone" onclick="document.getElementById('step3-file-input').click()">
+      <div class="upload-dropzone-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg></div>
+      <div class="t-md-14" style="color:var(--text-1);margin-bottom:var(--sp-1);">클릭하여 파일을 선택하거나 여기로 드래그해주세요</div>
+      <div class="t-rg-13" style="color:var(--text-off);">pdf, docx, hwp, hwpx (30MB 이내, 최대 3개)</div>
+    </div>
+    <input type="file" id="step3-file-input" accept=".hwp,.hwpx,.docx,.pdf" multiple style="display:none" onchange="handleStep3Files(this.files)" />
+    <div class="upload-file-list" id="step3-file-list"></div>
+    <div class="modal-footer">
+      <button class="btn btn-outlined btn-md" onclick="closeModal('modal-step3-upload')">취소</button>
+      <button class="btn btn-primary btn-md" id="step3-confirm-btn" disabled onclick="confirmStep3Upload()">업로드 완료</button>
+    </div>
   </div>
 </div>
 
@@ -612,6 +765,185 @@ function removeImg(i) {
 function selectStyleTab(el) { el.parentElement.querySelectorAll('.ds-seg-item').forEach(t=>t.classList.remove('active')); el.classList.add('active'); }
 function toast(msg) { const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2000); }
 
+/* ===== Generic Modal ===== */
+function openModal(id) { document.getElementById(id).classList.add('show'); }
+function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+
+/* ===== 양식 신청 ===== */
+let reqFile = null;
+
+function handleReqFile(fileList) {
+  const allowed = ['.hwp','.hwpx','.docx','.pdf'];
+  const f = fileList[0];
+  if(!f) return;
+  const ext = '.' + f.name.split('.').pop().toLowerCase();
+  if(!allowed.includes(ext)) { toast(`${ext} 파일은 지원하지 않습니다`); return; }
+  if(f.size > 30*1024*1024) { toast('30MB 이하 파일만 업로드 가능합니다'); return; }
+  reqFile = { name: f.name, size: f.size };
+  document.getElementById('req-file-input').value = '';
+  renderReqFile();
+}
+
+function removeReqFile() { reqFile = null; renderReqFile(); }
+
+function renderReqFile() {
+  const list = document.getElementById('req-file-list');
+  const btn = document.getElementById('req-submit-btn');
+  if(btn) btn.disabled = !reqFile;
+  if(!reqFile) { list.innerHTML = ''; return; }
+  const ext = reqFile.name.split('.').pop().toUpperCase();
+  const size = reqFile.size < 1024*1024 ? (reqFile.size/1024).toFixed(0) + ' KB' : (reqFile.size/(1024*1024)).toFixed(1) + ' MB';
+  list.innerHTML = `<div class="upload-file-item">
+    <div class="file-icon"><span class="t-sb-11" style="color:var(--accent);">${ext}</span></div>
+    <div class="file-info"><div class="file-name">${reqFile.name}</div><div class="file-size">${size}</div></div>
+    <button class="file-remove" onclick="removeReqFile()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+  </div>`;
+}
+
+function submitRequest() {
+  if(!reqFile) { toast('양식 파일을 첨부해주세요'); return; }
+  closeModal('modal-request');
+  document.getElementById('req-biz-name').value = '';
+  document.getElementById('req-url').value = '';
+  reqFile = null; renderReqFile();
+  toast('양식 신청이 완료되었습니다. 검토 후 약 24시간 이내에 반영됩니다.');
+}
+
+// Req dropzone drag events
+document.addEventListener('DOMContentLoaded', () => {
+  const rdz = document.getElementById('req-dropzone');
+  if(!rdz) return;
+  rdz.addEventListener('dragover', e => { e.preventDefault(); rdz.classList.add('dragover'); });
+  rdz.addEventListener('dragleave', () => rdz.classList.remove('dragover'));
+  rdz.addEventListener('drop', e => { e.preventDefault(); rdz.classList.remove('dragover'); handleReqFile(e.dataTransfer.files); });
+});
+
+/* ===== 기본값 초기화 ===== */
+function confirmReset() {
+  document.querySelectorAll('.style-grid .ds-select').forEach(s => s.selectedIndex = 0);
+  closeModal('modal-reset');
+  toast('문서 스타일이 기본값으로 초기화되었습니다');
+}
+
+/* ===== Step3 파일 업로드 ===== */
+let step3Files = [];
+
+function handleStep3Files(fileList) {
+  const allowed = ['.hwp','.hwpx','.docx','.pdf'];
+  for(const f of fileList) {
+    const ext = '.' + f.name.split('.').pop().toLowerCase();
+    if(!allowed.includes(ext)) { toast(`${ext} 파일은 지원하지 않습니다`); continue; }
+    if(f.size > 30*1024*1024) { toast('30MB 이하 파일만 업로드 가능합니다'); continue; }
+    if(step3Files.length >= 3) { toast('최대 3개까지 업로드 가능합니다'); break; }
+    step3Files.push({ name: f.name, size: f.size });
+  }
+  document.getElementById('step3-file-input').value = '';
+  renderStep3Files();
+}
+
+function removeStep3File(i) { step3Files.splice(i, 1); renderStep3Files(); }
+
+function renderStep3Files() {
+  const list = document.getElementById('step3-file-list');
+  const btn = document.getElementById('step3-confirm-btn');
+  btn.disabled = step3Files.length === 0;
+  if(step3Files.length === 0) { list.innerHTML = ''; return; }
+  list.innerHTML = step3Files.map((f, i) => {
+    const ext = f.name.split('.').pop().toUpperCase();
+    const size = f.size < 1024*1024 ? (f.size/1024).toFixed(0) + ' KB' : (f.size/(1024*1024)).toFixed(1) + ' MB';
+    return `<div class="upload-file-item">
+      <div class="file-icon"><span class="t-sb-11" style="color:var(--accent);">${ext}</span></div>
+      <div class="file-info"><div class="file-name">${f.name}</div><div class="file-size">${size}</div></div>
+      <button class="file-remove" onclick="removeStep3File(${i})"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>`;
+  }).join('');
+}
+
+function confirmStep3Upload() {
+  if(step3Files.length === 0) return;
+  const count = step3Files.length;
+  closeModal('modal-step3-upload');
+  toast(`${count}개 파일이 업로드되었습니다`);
+  step3Files = [];
+  renderStep3Files();
+}
+
+// Step3 dropzone drag events
+document.addEventListener('DOMContentLoaded', () => {
+  const dz3 = document.getElementById('step3-dropzone');
+  if(!dz3) return;
+  dz3.addEventListener('dragover', e => { e.preventDefault(); dz3.classList.add('dragover'); });
+  dz3.addEventListener('dragleave', () => dz3.classList.remove('dragover'));
+  dz3.addEventListener('drop', e => { e.preventDefault(); dz3.classList.remove('dragover'); handleStep3Files(e.dataTransfer.files); });
+});
+
+/* ===== Upload Modal Logic ===== */
+let uploadedFiles = [];
+
+function openUploadModal() {
+  uploadedFiles = [];
+  renderUploadFiles();
+  document.getElementById('upload-file-input').value = '';
+  document.getElementById('upload-overlay').classList.add('show');
+}
+
+function closeUploadModal() {
+  document.getElementById('upload-overlay').classList.remove('show');
+}
+
+function handleUploadFiles(fileList) {
+  const allowed = ['.hwp','.hwpx','.docx','.pdf'];
+  for(const f of fileList) {
+    const ext = '.' + f.name.split('.').pop().toLowerCase();
+    if(!allowed.includes(ext)) { toast(`${ext} 파일은 지원하지 않습니다`); continue; }
+    if(f.size > 30*1024*1024) { toast('30MB 이하 파일만 업로드 가능합니다'); continue; }
+    if(uploadedFiles.length >= 1) { toast('양식 파일은 1개만 업로드 가능합니다'); break; }
+    uploadedFiles.push({ name: f.name, size: f.size });
+  }
+  document.getElementById('upload-file-input').value = '';
+  renderUploadFiles();
+}
+
+function removeUploadFile(i) {
+  uploadedFiles.splice(i, 1);
+  renderUploadFiles();
+}
+
+function renderUploadFiles() {
+  const list = document.getElementById('upload-file-list');
+  const btn = document.getElementById('upload-confirm-btn');
+  btn.disabled = uploadedFiles.length === 0;
+  if(uploadedFiles.length === 0) { list.innerHTML = ''; return; }
+  list.innerHTML = uploadedFiles.map((f, i) => {
+    const ext = f.name.split('.').pop().toUpperCase();
+    const size = f.size < 1024*1024 ? (f.size/1024).toFixed(0) + ' KB' : (f.size/(1024*1024)).toFixed(1) + ' MB';
+    return `<div class="upload-file-item">
+      <div class="file-icon"><span class="t-sb-11" style="color:var(--accent);">${ext}</span></div>
+      <div class="file-info"><div class="file-name">${f.name}</div><div class="file-size">${size}</div></div>
+      <button class="file-remove" onclick="removeUploadFile(${i})"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>`;
+  }).join('');
+}
+
+function confirmUpload() {
+  if(uploadedFiles.length === 0) return;
+  const name = uploadedFiles[0].name;
+  selectedBiz = -1;
+  closeUploadModal();
+  document.querySelectorAll('.selected-name').forEach(el => el.textContent = `'${name}'`);
+  renderFooter();
+  toast(`'${name}' 양식이 업로드되었습니다`);
+}
+
+// Dropzone drag events
+document.addEventListener('DOMContentLoaded', () => {
+  const dz = document.getElementById('upload-dropzone');
+  if(!dz) return;
+  dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('dragover'); });
+  dz.addEventListener('dragleave', () => dz.classList.remove('dragover'));
+  dz.addEventListener('drop', e => { e.preventDefault(); dz.classList.remove('dragover'); handleUploadFiles(e.dataTransfer.files); });
+});
+
 function updateSelectedName() {
   const name = selectedBiz !== null ? `'${BIZ_DATA[selectedBiz].name}'` : "'양식을 선택해주세요'";
   document.querySelectorAll('.selected-name').forEach(el => el.textContent = name);
@@ -654,7 +986,7 @@ function startGenAnimation() {
             </div>
             <div class="t-sb-20" style="margin-bottom:var(--sp-3);">사업계획서 생성이 완료되었습니다</div>
             <div class="t-rg-14" style="color:var(--text-off);text-align:center;line-height:1.6;margin-bottom:var(--sp-8);">작성된 사업계획서를 확인하고 다운로드할 수 있습니다.</div>
-            <button class="btn btn-filled btn-lg t-sb-16" onclick="toast('다운로드를 시작합니다')">사업계획서 다운로드</button>
+            <button class="btn btn-filled btn-lg t-sb-16" onclick="openModal('modal-download')">사업계획서 다운로드</button>
           `;
         }
         const footer = document.getElementById('footer');
