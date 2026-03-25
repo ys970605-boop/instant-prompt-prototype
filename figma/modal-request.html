@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --accent:#2C81FC;--accent-dark:#0C52B8;--accent-sub:#EAF3FF;--accent-mid:#ABCDFF;
+  --warn:#F04452;--warn-sub:#FFECEE;
+  --text-1:#25262C;--text-2:#596070;--text-3:#6E7687;--text-off:#B5B9C4;
+  --line-l:#F1F1F4;--line-d:#E3E4E8;
+  --bg-white:#FFFFFF;--bg-light:#FAFAFC;--bg-gray:#F1F1F4;--bg-dark:#3F434D;--black:#25262C;
+  --r-sm:4px;--r-md:6px;--r-lg:8px;--r-xl:10px;--r-2xl:12px;--r-full:9999px;
+  --sh-sm:0px 1px 2px 0px rgba(0,27,55,0.08);--sh-base:0px 2px 4px 0px rgba(0,27,55,0.10);--sh-md:0px 4px 8px 0px rgba(0,27,55,0.12);
+  --sp-1:4px;--sp-2:8px;--sp-3:12px;--sp-4:16px;--sp-5:20px;--sp-6:24px;--sp-8:32px;--sp-10:40px;--sp-12:48px;--sp-16:64px;
+  --font:'Inter','Noto Sans KR',-apple-system,sans-serif;--ls:-0.02em;
+}
+* { margin:0;padding:0;box-sizing:border-box;writing-mode:horizontal-tb !important; }
+body { font-family:var(--font);background:rgba(37,38,44,0.3);height:100vh;display:flex;align-items:center;justify-content:center; }
+
+.t-sb-24 { font-size:24px;font-weight:600;letter-spacing:var(--ls); }
+.t-sb-20 { font-size:20px;font-weight:600;letter-spacing:var(--ls); }
+.t-sb-18 { font-size:18px;font-weight:600;letter-spacing:var(--ls); }
+.t-sb-16 { font-size:16px;font-weight:600;letter-spacing:var(--ls); }
+.t-sb-14 { font-size:14px;font-weight:600;letter-spacing:var(--ls); }
+.t-sb-11 { font-size:11px;font-weight:600;letter-spacing:var(--ls); }
+.t-md-14 { font-size:14px;font-weight:500;letter-spacing:var(--ls); }
+.t-md-13 { font-size:13px;font-weight:500;letter-spacing:var(--ls); }
+.t-md-12 { font-size:12px;font-weight:500;letter-spacing:var(--ls); }
+.t-rg-14 { font-size:14px;font-weight:400;letter-spacing:var(--ls); }
+.t-rg-13 { font-size:13px;font-weight:400;letter-spacing:var(--ls); }
+.t-rg-12 { font-size:12px;font-weight:400;letter-spacing:var(--ls); }
+
+.btn { display:inline-flex;align-items:center;justify-content:center;gap:6px;border-radius:var(--r-lg);font-family:var(--font);letter-spacing:var(--ls);cursor:pointer;transition:all 0.15s;border:1px solid var(--line-d);background:var(--bg-white);color:var(--text-1); }
+.btn-sm { height:32px;padding:0 12px;font-size:13px; }
+.btn-md { height:36px;padding:0 16px;font-size:14px; }
+.btn-lg { height:44px;padding:0 24px;font-size:16px; }
+.btn-outlined { background:var(--bg-white);border:1px solid var(--line-d);color:var(--text-1); }
+.btn-primary { background:var(--accent);color:#fff;border:none; }
+.btn-primary:disabled { background:var(--bg-gray);color:var(--text-off);cursor:not-allowed; }
+
+.modal { width:520px;background:var(--bg-white);border-radius:var(--r-2xl);box-shadow:var(--sh-md);overflow:hidden; }
+.modal-body { padding:32px; }
+.modal-header { display:flex;align-items:center;justify-content:space-between;margin-bottom:16px; }
+.close-btn { width:32px;height:32px;display:flex;align-items:center;justify-content:center;border:none;background:none;cursor:pointer;border-radius:var(--r-md);color:var(--text-3); }
+.close-btn:hover { background:var(--bg-light); }
+.desc { color:var(--text-3);margin-bottom:24px;line-height:1.6; }
+
+.field { margin-bottom:16px; }
+.field-label { display:block;margin-bottom:6px;color:var(--text-1); }
+.field-label .required { color:var(--warn);margin-left:2px; }
+.field-input { width:100%;height:40px;padding:0 12px;border:1px solid var(--line-d);border-radius:var(--r-md);font-family:var(--font);font-size:14px;letter-spacing:var(--ls);color:var(--text-1);outline:none;transition:border-color 0.15s; }
+.field-input::placeholder { color:var(--text-off); }
+.field-input:focus { border-color:var(--accent); }
+
+.dropzone { border:1.5px dashed var(--line-d);border-radius:var(--r-lg);padding:24px 16px;display:flex;flex-direction:column;align-items:center;gap:6px;margin-bottom:12px;cursor:pointer; }
+.dropzone-icon { width:32px;height:32px;color:var(--text-off); }
+.dropzone-main { color:var(--text-2); }
+.dropzone-sub { color:var(--text-off); }
+
+.file-item { display:flex;align-items:center;gap:12px;padding:10px 12px;background:var(--bg-light);border-radius:var(--r-md);margin-bottom:24px; }
+.file-icon-box { min-width:40px;height:32px;padding:0 6px;background:var(--accent-sub);border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;color:var(--accent);font-weight:600;font-size:11px;letter-spacing:var(--ls); }
+.file-name { flex:1;color:var(--text-1); }
+.file-size { color:var(--text-off); }
+.file-remove { width:24px;height:24px;display:flex;align-items:center;justify-content:center;border:none;background:none;cursor:pointer;color:var(--text-off);border-radius:var(--r-sm); }
+.file-remove:hover { background:var(--bg-gray);color:var(--text-2); }
+
+.modal-footer { display:flex;justify-content:flex-end;gap:8px;padding-top:4px; }
+</style>
+</head>
+<body>
+<div class="modal">
+  <div class="modal-body">
+    <div class="modal-header">
+      <span class="t-sb-18" style="color:var(--text-1)">양식 신청하기</span>
+      <button class="close-btn">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M15 5L5 15M5 5l10 10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+    <p class="t-rg-14 desc">원하시는 지원사업 양식을 신청해주세요. 검토 후 보통 24시간 이내에 업로드됩니다.</p>
+
+    <div class="field">
+      <label class="t-md-14 field-label">지원사업명</label>
+      <input type="text" class="field-input" placeholder="예: 2026년 예비창업패키지">
+    </div>
+
+    <div class="field">
+      <label class="t-md-14 field-label">공고 URL</label>
+      <input type="text" class="field-input" placeholder="https://www.k-startup.go.kr/...">
+    </div>
+
+    <div class="field">
+      <label class="t-md-14 field-label">양식 파일 첨부<span class="required">*</span></label>
+      <div class="dropzone">
+        <svg class="dropzone-icon" viewBox="0 0 32 32" fill="none"><path d="M16 6v12m0 0l-5-5m5 5l5-5" stroke="#B5B9C4" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M6 22l.6 1.8A2.4 2.4 0 009 25.2h14a2.4 2.4 0 002.4-1.4L26 22" stroke="#B5B9C4" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span class="t-md-13 dropzone-main">클릭하여 파일을 선택하거나 여기로 드래그해주세요</span>
+        <span class="t-rg-12 dropzone-sub">hwp, hwpx, docx, pdf 파일 (최대 30MB)</span>
+      </div>
+      <div class="file-item">
+        <div class="file-icon-box t-sb-11">PDF</div>
+        <span class="t-md-14 file-name">초기창업패키지_공고문.pdf</span>
+        <span class="t-rg-12 file-size">2.1 MB</span>
+        <button class="file-remove">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M12 4L4 12M4 4l8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn btn-md btn-outlined t-md-14">취소</button>
+      <button class="btn btn-md btn-primary t-md-14">신청하기</button>
+    </div>
+  </div>
+</div>
+</body>
+</html>

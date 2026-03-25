@@ -928,11 +928,71 @@ function renderUploadFiles() {
 function confirmUpload() {
   if(uploadedFiles.length === 0) return;
   const name = uploadedFiles[0].name;
-  selectedBiz = -1;
-  closeUploadModal();
-  document.querySelectorAll('.selected-name').forEach(el => el.textContent = `'${name}'`);
-  renderFooter();
-  toast(`'${name}' 양식이 업로드되었습니다`);
+  const modal = document.querySelector('#upload-overlay .upload-modal');
+  // 로딩 상태로 전환
+  modal.innerHTML = `
+    <div style="text-align:center;padding:var(--sp-6) 0;">
+      <div class="loading-spinner-ring"></div>
+      <div class="t-sb-18" style="margin-bottom:var(--sp-2);">양식을 업로드하고 있습니다</div>
+      <div class="t-rg-14" style="color:var(--text-3);line-height:1.6;">업로드한 파일을 분석하여 양식을 등록 중입니다.<br/>잠시만 기다려주세요.</div>
+      <div style="margin-top:var(--sp-6);display:flex;flex-direction:column;gap:var(--sp-3);text-align:left;padding:0 var(--sp-5);">
+        <div class="loading-step" id="upload-step-0"><div class="loading-dot active"></div><span class="t-rg-14" style="color:var(--text-1);font-weight:500;">파일 업로드 중...</span></div>
+        <div class="loading-step" id="upload-step-1"><div class="loading-dot pending"></div><span class="t-rg-14" style="color:var(--text-off);">양식 구조 분석</span></div>
+        <div class="loading-step" id="upload-step-2"><div class="loading-dot pending"></div><span class="t-rg-14" style="color:var(--text-off);">양식 등록 완료</span></div>
+      </div>
+    </div>`;
+  let step = 0;
+  const labels = ['파일 업로드 중...','양식 구조 분석 중...','양식 등록 완료'];
+  const interval = setInterval(() => {
+    step++;
+    for(let i=0;i<3;i++){
+      const el = document.getElementById('upload-step-'+i);
+      if(!el) continue;
+      const dot = el.querySelector('.loading-dot');
+      const span = el.querySelector('span');
+      if(i<step){ dot.className='loading-dot done'; dot.innerHTML='<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg>'; span.style.color='var(--text-1)'; span.style.fontWeight='400'; span.textContent=labels[i].replace(' 중...',''); }
+      else if(i===step){ dot.className='loading-dot active'; span.style.color='var(--text-1)'; span.style.fontWeight='500'; span.textContent=labels[i]; }
+    }
+    if(step>=3){
+      clearInterval(interval);
+      setTimeout(()=>{
+        closeUploadModal();
+        selectedBiz = -1;
+        document.querySelectorAll('.selected-name').forEach(el => el.textContent = `'${name}'`);
+        renderFooter();
+        toast(`'${name}' 양식이 업로드되었습니다`);
+        // 모달 원래 내용 복원
+        restoreUploadModal();
+      },600);
+    }
+  },1200);
+}
+
+function restoreUploadModal() {
+  const modal = document.querySelector('#upload-overlay .upload-modal');
+  modal.innerHTML = `
+    <div class="upload-modal-header">
+      <div class="t-sb-18">양식 직접 업로드</div>
+      <button class="upload-modal-close" onclick="closeUploadModal()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="t-rg-14" style="color:var(--text-3);margin-bottom:var(--sp-5);">사업계획서 양식 파일을 업로드하면 해당 양식 기반으로 문서가 생성됩니다.</div>
+    <div class="upload-dropzone" id="upload-dropzone" onclick="document.getElementById('upload-file-input').click()">
+      <div class="upload-dropzone-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg></div>
+      <div class="t-md-14" style="color:var(--text-1);margin-bottom:var(--sp-1);">클릭하여 파일을 선택하거나 여기로 드래그해주세요</div>
+      <div class="t-rg-13" style="color:var(--text-off);">hwp, hwpx, docx, pdf 파일 (최대 30MB)</div>
+    </div>
+    <input type="file" id="upload-file-input" accept=".hwp,.hwpx,.docx,.pdf" style="display:none" onchange="handleUploadFiles(this.files)" />
+    <div class="upload-file-list" id="upload-file-list"></div>
+    <div class="upload-modal-footer">
+      <button class="btn btn-outlined btn-md" onclick="closeUploadModal()">취소</button>
+      <button class="btn btn-primary btn-md" id="upload-confirm-btn" disabled onclick="confirmUpload()">업로드 완료</button>
+    </div>`;
+  uploadedFiles = [];
+  // 드래그 이벤트 재바인딩
+  const dz = document.getElementById('upload-dropzone');
+  dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('dragover'); });
+  dz.addEventListener('dragleave', () => dz.classList.remove('dragover'));
+  dz.addEventListener('drop', e => { e.preventDefault(); dz.classList.remove('dragover'); handleUploadFiles(e.dataTransfer.files); });
 }
 
 // Dropzone drag events
