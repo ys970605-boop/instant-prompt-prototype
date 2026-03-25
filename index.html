@@ -208,7 +208,6 @@
   .img-title.off { color: var(--text-1); }
   .img-input { width: 100%; padding: 10px var(--sp-3); border: 1px solid var(--line-d); border-radius: var(--r-lg); font-size: 13px; letter-spacing: var(--ls); font-family: var(--font); transition: border-color 0.15s; }
   .img-input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 2px rgba(44,129,252,0.12); }
-  .img-input.active { border-color: var(--line-d); }
   .img-input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 2px rgba(44,129,252,0.12); }
   /* DS IconButton (text variant) */
   .icon-btn-text { width: 32px; height: 32px; border-radius: var(--r-lg); border: none; background: transparent; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-off); transition: all 0.15s; }
@@ -646,6 +645,9 @@ function renderFooter() {
   } else if(currentStep===3) {
     const valid = isStep3Valid();
     f.innerHTML = `<button class="btn btn-outlined t-sb-14" onclick="goPrev()">이전</button><div class="footer-right"><button class="btn btn-outlined t-sb-14" onclick="goNext()">건너뛰기</button><button class="btn ${valid?'btn-filled':'btn-disabled'} t-sb-14" onclick="${valid?'goNext()':''}" ${valid?'':'disabled'}>다음 단계</button></div>`;
+  } else if(currentStep===4) {
+    const hasImg = IMG_DATA.some(i=>i.checked);
+    f.innerHTML = `<button class="btn btn-outlined t-sb-14" onclick="goPrev()">이전</button><div class="footer-right"><button class="btn btn-outlined t-sb-14" onclick="goNext()">건너뛰기</button><button class="btn ${hasImg?'btn-filled':'btn-disabled'} t-sb-14" onclick="${hasImg?'goNext()':''}" ${hasImg?'':'disabled'}>다음 단계</button></div>`;
   } else {
     f.innerHTML = `<button class="btn btn-outlined t-sb-14" onclick="goPrev()">이전</button><div class="footer-right"><button class="btn btn-outlined t-sb-14" onclick="goNext()">건너뛰기</button><button class="btn btn-filled t-sb-14" onclick="goNext()">다음 단계</button></div>`;
   }
@@ -736,7 +738,7 @@ function renderImgTable() {
     <tr>
       <td><input type="checkbox" class="ds-check" ${img.checked?'checked':''} onchange="toggleImg(${i})" /></td>
       <td class="${img.checked?'img-title':'img-title off'} t-md-14"><input class="img-title-input" value="${img.title}" onchange="IMG_DATA[${i}].title=this.value" style="border:none;background:none;font:inherit;color:inherit;width:100%;padding:0;outline:none;letter-spacing:var(--ls);" /></td>
-      <td><input class="img-input ${img.checked?'active':''}" value="${img.prompt}" /></td>
+      <td><input class="img-input" value="${img.prompt}" /></td>
       <td><button class="icon-btn-text" title="삭제" onclick="removeImg(${i})"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button></td>
     </tr>`).join('');
   const checkedCount = IMG_DATA.filter(i=>i.checked).length;
