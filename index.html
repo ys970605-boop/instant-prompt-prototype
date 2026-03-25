@@ -668,7 +668,7 @@ function renderImgTable() {
   document.getElementById('img-table').innerHTML = IMG_DATA.map((img,i) => `
     <tr>
       <td><input type="checkbox" class="ds-check" ${img.checked?'checked':''} onchange="toggleImg(${i})" /></td>
-      <td class="${img.checked?'img-title':'img-title off'} t-md-14">${img.title}</td>
+      <td class="${img.checked?'img-title':'img-title off'} t-md-14"><input class="img-title-input" value="${img.title}" onchange="IMG_DATA[${i}].title=this.value" style="border:none;background:none;font:inherit;color:inherit;width:100%;padding:0;outline:none;letter-spacing:var(--ls);" /></td>
       <td><input class="img-input ${img.checked?'active':''}" value="${img.prompt}" /></td>
       <td><button class="icon-btn-text" title="삭제" onclick="removeImg(${i})"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button></td>
     </tr>`).join('');
