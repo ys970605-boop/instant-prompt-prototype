@@ -72,7 +72,7 @@
   .stepper-bar { padding: var(--sp-5) var(--sp-20) var(--sp-4); border-bottom: 1px solid var(--line-l); flex-shrink: 0; }
   .stepper-label { font-size: 12px; line-height: 18px; font-weight: 500; letter-spacing: var(--ls); color: var(--text-3); margin-bottom: 14px; }
   .stepper { display: flex; align-items: flex-start; justify-content: center; }
-  .step { display: flex; flex-direction: column; align-items: center; width: 90px; gap: var(--sp-1); cursor: pointer; min-width: 90px; }
+  .step { display: flex; flex-direction: column; align-items: center; width: 90px; gap: var(--sp-1); cursor: default; min-width: 90px; }
   .step-circle { width: 28px; height: 28px; border-radius: var(--r-full); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; letter-spacing: var(--ls); transition: all 0.2s; }
   .step-circle.done { background: var(--accent); color: #fff; }
   .step-circle.active { background: #fff; border: 2.5px solid var(--accent); color: var(--accent); }
@@ -130,10 +130,10 @@
 
   /* ===== Common ===== */
   .page-title { color: var(--text-1); margin-bottom: var(--sp-6); }
-  .step-title { color: var(--text-1); text-align: center; margin-bottom: var(--sp-5); }
+  .step-title { color: var(--text-1); text-align: left; margin-bottom: var(--sp-5); }
   .step-title .hl { color: var(--accent); }
-  .info-banner { background: var(--accent-sub); border-radius: var(--r-lg); padding: 14px 18px; display: flex; align-items: center; gap: var(--sp-2); margin-bottom: var(--sp-5); color: var(--text-2); }
-  .info-banner .ic { color: var(--accent); flex-shrink: 0; }
+  .info-banner { background: var(--bg-light); border-radius: var(--r-lg); padding: 14px 18px; display: flex; align-items: center; gap: var(--sp-2); margin-bottom: var(--sp-5); color: var(--text-2); }
+  .info-banner .ic { color: var(--text-3); flex-shrink: 0; }
   .section-title { color: var(--text-1); margin-bottom: var(--sp-4); }
   .desc-text { color: var(--text-3); margin-bottom: var(--sp-3); line-height: 1.5; }
   .centered { max-width: 800px; margin: 0 auto; }
@@ -196,18 +196,20 @@
   .pg.active { background: var(--black); color: #fff; }
 
   /* ===== Upload ===== */
-  .doc-icon { width: 24px; height: 24px; background: var(--accent-sub); border-radius: var(--r-sm); display: inline-flex; align-items: center; justify-content: center; color: var(--accent); font-size: 11px; margin-right: var(--sp-2); vertical-align: middle; }
+  .doc-icon { width: 24px; height: 24px; background: var(--bg-gray); border-radius: var(--r-sm); display: inline-flex; align-items: center; justify-content: center; color: var(--text-3); font-size: 11px; margin-right: var(--sp-2); vertical-align: middle; }
   .drop-zone { border: 2px dashed var(--line-d); border-radius: var(--r-2xl); padding: var(--sp-12); text-align: center; color: var(--text-off); cursor: pointer; transition: all 0.2s; }
   .drop-zone:hover { border-color: var(--accent); background: var(--accent-sub); }
   .drop-zone .up-icon { font-size: 28px; margin-bottom: var(--sp-3); color: var(--line-d); }
 
   /* ===== Image Selection ===== */
-  .selected-badge { display: inline-flex; align-items: center; gap: var(--sp-1); padding: 6px 14px; border-radius: var(--r-full); background: var(--accent-sub); color: var(--accent); margin-bottom: var(--sp-5); }
-  .img-title { color: var(--accent); font-weight: 500; }
+  .selected-badge { display: inline-flex; align-items: center; gap: var(--sp-1); padding: 6px 14px; border-radius: var(--r-full); background: var(--bg-light); color: var(--text-1); margin-bottom: var(--sp-5); }
+  .selected-badge .count-highlight { color: var(--accent); font-weight: 600; }
+  .img-title { color: var(--text-1); font-weight: 500; }
   .img-title.off { color: var(--text-1); }
   .img-input { width: 100%; padding: 10px var(--sp-3); border: 1px solid var(--line-d); border-radius: var(--r-lg); font-size: 13px; letter-spacing: var(--ls); font-family: var(--font); transition: border-color 0.15s; }
   .img-input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 2px rgba(44,129,252,0.12); }
-  .img-input.active { border-color: var(--accent); }
+  .img-input.active { border-color: var(--line-d); }
+  .img-input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 2px rgba(44,129,252,0.12); }
   /* DS IconButton (text variant) */
   .icon-btn-text { width: 32px; height: 32px; border-radius: var(--r-lg); border: none; background: transparent; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-off); transition: all 0.15s; }
   .icon-btn-text:hover { background: var(--bg-gray); color: var(--text-2); }
@@ -310,14 +312,20 @@ tr.selected-row:hover { background-color: #E0EFFF; }
       <div class="step-content" id="step-1">
         <div class="page-title t-sb-24">지원사업 & 사업계획서</div>
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:var(--sp-5);gap:var(--sp-4);">
-          <input class="ds-input search" placeholder="지원사업명 검색" style="max-width:440px;" />
+          <div style="display:flex;gap:var(--sp-2);align-items:center;flex:1;max-width:600px;">
+            <input class="ds-input search" placeholder="지원사업명 검색" style="max-width:440px;" />
+            <select class="ds-select" id="biz-sort" onchange="sortBizData()" style="width:140px;flex-shrink:0;">
+              <option value="dday">마감임박순</option>
+              <option value="latest">최신순</option>
+            </select>
+          </div>
           <div style="display:flex;gap:var(--sp-2);align-items:center;">
             <button class="btn btn-outlined btn-sm" onclick="openUploadModal()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:4px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>양식 직접 업로드</button>
             <label class="t-rg-13" style="cursor:pointer;color:var(--text-3);display:flex;align-items:center;gap:4px;"><input type="checkbox" class="ds-check" checked />지원가능한 사업만 보기</label>
           </div>
         </div>
         <table>
-          <thead><tr><th style="width:50px">관심</th><th>사업명</th><th style="width:130px">마감일시</th><th style="width:50px"></th><th style="width:100px">주관기관</th><th style="width:40px"></th></tr></thead>
+          <thead><tr><th style="width:50px">관심</th><th>사업명</th><th style="width:130px">마감일시</th><th style="width:50px"></th><th style="width:100px">주관기관</th><th style="width:80px"></th></tr></thead>
           <tbody id="biz-table"></tbody>
         </table>
         <div class="pagination">
@@ -332,7 +340,7 @@ tr.selected-row:hover { background-color: #E0EFFF; }
       <div class="step-content" id="step-2">
         <div class="centered">
           <div class="step-title t-sb-20"><span class="hl selected-name"></span><br/>사업계획서 작성을 위한 프롬프트를 입력해주세요</div>
-          <div class="info-banner t-rg-13"><span class="ic">&#x24D8;</span> 프롬프트를 간단히 입력하거나, AI 심사역과 함께 고도화하는 단계입니다. 단계를 건너뛸 수 있습니다.</div>
+          <div class="info-banner t-rg-13"><span class="ic">&#x24D8;</span> 사업아이템 설명을 자유롭게 입력하거나, AI 심사역과 함께 고도화하는 단계입니다. 단계를 건너뛸 수 있습니다.</div>
           <div class="ds-seg" style="margin-bottom:var(--sp-5);">
             <button class="ds-seg-item active t-md-14" id="tab-idea" onclick="switchPromptTab('idea')">아이디어 모드</button>
             <button class="ds-seg-item t-md-14" id="tab-ai" onclick="switchPromptTab('ai')">AI 심사역과 함께</button>
@@ -353,17 +361,19 @@ tr.selected-row:hover { background-color: #E0EFFF; }
         <div class="centered">
           <div class="step-title t-sb-20"><span class="hl selected-name"></span><br/>사업계획서 작성을 위한 자료를 업로드해주세요</div>
           <div class="info-banner t-rg-13"><span class="ic">&#x24D8;</span> 기존에 만들었던 다른 사업계획서 파일 혹은 이외 파일들을 업로드하는 단계입니다. 단계를 건너뛸 수 있습니다.</div>
-          <div class="section-title t-sb-16">기존 작성 문서 불러오기</div>
-          <table>
-            <thead><tr><th style="width:50px">관심</th><th>문서명</th><th style="width:120px">유형</th><th style="width:130px">생성 일시</th><th style="width:100px"></th></tr></thead>
-            <tbody id="doc-table"></tbody>
-          </table>
-          <div class="pagination" style="margin-bottom:var(--sp-8);"><span class="pg">&lsaquo;</span><span class="pg">1</span><span class="pg">&hellip;</span><span class="pg">19</span><span class="pg active">20</span><span class="pg">21</span><span class="pg">&hellip;</span><span class="pg">86</span><span class="pg">&rsaquo;</span></div>
           <div class="section-title t-sb-16">파일 업로드하기</div>
           <div class="drop-zone" onclick="openModal('modal-step3-upload')" style="cursor:pointer;">
             <div class="up-icon">&#x2B06;</div>
             <div class="t-rg-14">클릭하여 파일을 선택하거나 여기로 드래그해주세요</div>
             <div class="t-rg-12" style="color:var(--text-off);margin-top:var(--sp-2);">(pdf, docx, hwp, hwpx에 한하여 30mb 이내 3개까지 첨부 가능)</div>
+          </div>
+          <div style="margin-top:var(--sp-8);">
+          <div class="section-title t-sb-16">기존 작성 문서 불러오기</div>
+          <table>
+            <thead><tr><th style="width:50px">관심</th><th>문서명</th><th style="width:130px">생성 일시</th><th style="width:100px"></th></tr></thead>
+            <tbody id="doc-table"></tbody>
+          </table>
+          <div class="pagination" style="margin-bottom:var(--sp-8);"><span class="pg">&lsaquo;</span><span class="pg">1</span><span class="pg">&hellip;</span><span class="pg">19</span><span class="pg active">20</span><span class="pg">21</span><span class="pg">&hellip;</span><span class="pg">86</span><span class="pg">&rsaquo;</span></div>
           </div>
         </div>
       </div>
@@ -373,8 +383,8 @@ tr.selected-row:hover { background-color: #E0EFFF; }
         <div class="wide">
           <div class="step-title t-sb-20"><span class="hl selected-name"></span><br/>사업계획서 시각 자료(이미지) 구성</div>
           <div class="info-banner t-rg-13"><span class="ic">&#x24D8;</span> 선택하신 양식과 입력하신 프롬프트를 기반으로 필요한 이미지 리스트를 AI가 추천합니다.</div>
-          <div class="desc-text t-rg-13">이미지는 최대 8장까지 선택할 수 있습니다. 고객이 직접 항목을 추가하거나 프롬프트를 수정할 수 있습니다.</div>
-          <div class="selected-badge t-md-13" id="img-count">선택된 이미지: 3 / 8</div>
+          <div class="desc-text t-rg-13">이미지 최대 10장 생성 가능. 직접 항목을 추가하거나 프롬프트를 수정할 수 있습니다.</div>
+          <div class="selected-badge t-md-13" id="img-count">선택된 이미지: <span class="count-highlight">3</span> / 10</div>
           <table>
             <thead><tr><th style="width:50px">선택</th><th style="width:150px">이미지 제목</th><th>생성 프롬프트 (AI에게 내리는 명령)</th><th style="width:60px"></th></tr></thead>
             <tbody id="img-table"></tbody>
@@ -386,8 +396,8 @@ tr.selected-row:hover { background-color: #E0EFFF; }
       <!-- STEP 5 -->
       <div class="step-content" id="step-5">
         <div class="centered">
-          <div class="page-title t-sb-24">문서 생성 세부 설정</div>
-          <div class="info-banner t-rg-13"><span class="ic">&#x24D8;</span> 완벽한 사업계획서를 위해 문서의 스타일과 데이터 연동 옵션을 확인해주세요.</div>
+          <div class="page-title t-sb-24">문서 세부 설정</div>
+          <div class="info-banner t-rg-13"><span class="ic">&#x24D8;</span> 보다 완벽한 사업계획서를 위해 문서의 스타일과 데이터 연동 옵션을 확인해주세요.</div>
           <div class="section-title t-sb-16">기업 정보 자동 적용 (KODATA 연동)</div>
           <div class="kodata-row">
             <div class="t-rg-14" style="color:var(--text-2);">저장된 기업 정보를 바탕으로 재무지표, 인력 현황을 자동 기입합니다.</div>
@@ -458,13 +468,13 @@ tr.selected-row:hover { background-color: #E0EFFF; }
       <div class="t-sb-18">양식 직접 업로드</div>
       <button class="upload-modal-close" onclick="closeUploadModal()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
     </div>
-    <div class="t-rg-14" style="color:var(--text-3);margin-bottom:var(--sp-5);">사업계획서 양식 파일을 업로드하면 해당 양식 기반으로 문서가 생성됩니다.</div>
+    <div class="t-rg-14" style="color:var(--text-3);margin-bottom:var(--sp-5);">사업계획서 양식 파일을 업로드하면 해당 양식 기반으로 문서를 생성할 수 있습니다.</div>
     <div class="upload-dropzone" id="upload-dropzone" onclick="document.getElementById('upload-file-input').click()">
       <div class="upload-dropzone-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg></div>
       <div class="t-md-14" style="color:var(--text-1);margin-bottom:var(--sp-1);">클릭하여 파일을 선택하거나 여기로 드래그해주세요</div>
-      <div class="t-rg-13" style="color:var(--text-off);">hwp, hwpx, docx, pdf 파일 (최대 30MB)</div>
+      <div class="t-rg-13" style="color:var(--text-off);">hwp, hwpx 파일 (최대 30MB)</div>
     </div>
-    <input type="file" id="upload-file-input" accept=".hwp,.hwpx,.docx,.pdf" style="display:none" onchange="handleUploadFiles(this.files)" />
+    <input type="file" id="upload-file-input" accept=".hwp,.hwpx" style="display:none" onchange="handleUploadFiles(this.files)" />
     <div class="upload-file-list" id="upload-file-list"></div>
     <div class="upload-modal-footer">
       <button class="btn btn-outlined btn-md" onclick="closeUploadModal()">취소</button>
@@ -480,7 +490,7 @@ tr.selected-row:hover { background-color: #E0EFFF; }
       <div class="t-sb-18">양식 신청하기</div>
       <button class="modal-close" onclick="closeModal('modal-request')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
     </div>
-    <div class="t-rg-14" style="color:var(--text-3);margin-bottom:var(--sp-5);">원하시는 지원사업 양식을 신청해주세요. 검토 후 보통 24시간 이내에 업로드됩니다.</div>
+    <div class="t-rg-14" style="color:var(--text-3);margin-bottom:var(--sp-5);">원하시는 지원사업 양식을 신청해주세요.<br/>검토 후 보통 24시간 이내에 업로드됩니다.</div>
     <div class="request-field">
       <label>지원사업명</label>
       <input class="ds-input" id="req-biz-name" placeholder="예: 2026년 예비창업패키지" />
@@ -488,6 +498,10 @@ tr.selected-row:hover { background-color: #E0EFFF; }
     <div class="request-field">
       <label>공고 URL</label>
       <input class="ds-input" id="req-url" placeholder="https://www.k-startup.go.kr/..." />
+    </div>
+    <div class="request-field">
+      <label>알림받을 이메일</label>
+      <input class="ds-input" id="req-email" type="email" placeholder="example@company.com" />
     </div>
     <div class="request-field">
       <label>양식 파일 첨부 <span class="required">*</span></label>
@@ -578,6 +592,9 @@ const BIZ_DATA = [
   {name:'2026년 건강일터 조성지원(환기장치 설치비용) 사업 공고',date:'26.11.12 18:00',dday:'D-11',ddayType:'neutral',org:'창업진흥원',star:false},
   {name:'AI프롬프트 데이터기반 마케팅 전략기획전문가 양성과정 훈련생 모집',date:'26.11.12 18:00',dday:'D-15',ddayType:'neutral',org:'창업진흥원',star:false},
   {name:'서울바이오허브 2026 BIO USA 창업기업 모집 공고',date:'26.11.12 18:00',dday:'D-24',ddayType:'neutral',org:'창업진흥원',star:false},
+  {name:'2026년 스마트공장 보급·확산사업 참여기업 모집 공고',date:'26.10.28 18:00',dday:'D-30',ddayType:'neutral',org:'중소벤처기업부',star:false},
+  {name:'2026년도 기술혁신형 중소기업(Inno-Biz) 확인 공고',date:'26.10.20 18:00',dday:'D-38',ddayType:'neutral',org:'기술보증기금',star:false},
+  {name:'2026년 글로벌 액셀러레이팅 프로그램 참여기업 모집',date:'26.10.15 18:00',dday:'D-43',ddayType:'neutral',org:'창업진흥원',star:false},
 ];
 const IMG_DATA = [
   {title:'비즈니스 모델 (BM)',prompt:'독스헌트의 B2B 구독 및 건당 결제 수익 구조를 보여주는 화살표 도식',checked:true},
@@ -600,6 +617,20 @@ function renderStepper() {
   bar.innerHTML = html+'</div>';
 }
 
+function isStep2Valid() {
+  const textarea = document.querySelector('#step-2 .ds-textarea');
+  if(textarea && textarea.value.trim().length > 0) return true;
+  const aiTextareas = document.querySelectorAll('#prompt-ai .ds-textarea');
+  for(const ta of aiTextareas) { if(ta.value.trim().length > 0) return true; }
+  return false;
+}
+
+function isStep3Valid() {
+  if(step3Files.length > 0) return true;
+  if(DOC_DATA.some(d => d.uploaded)) return true;
+  return false;
+}
+
 function renderFooter() {
   const f = document.getElementById('footer');
   if(currentStep===1) {
@@ -609,21 +640,46 @@ function renderFooter() {
     f.innerHTML = `<div></div><div></div>`;
   } else if(currentStep===5) {
     f.innerHTML = `<button class="btn btn-outlined t-sb-14" onclick="goPrev()">이전 단계</button><div class="footer-right"><button class="btn btn-filled btn-lg t-sb-16" onclick="goNext()">사업계획서 생성 시작</button></div>`;
+  } else if(currentStep===2) {
+    const valid = isStep2Valid();
+    f.innerHTML = `<button class="btn btn-outlined t-sb-14" onclick="goPrev()">이전</button><div class="footer-right"><button class="btn btn-outlined t-sb-14" onclick="goNext()">건너뛰기</button><button class="btn ${valid?'btn-filled':'btn-disabled'} t-sb-14" onclick="${valid?'goNext()':''}" ${valid?'':'disabled'}>다음 단계</button></div>`;
+  } else if(currentStep===3) {
+    const valid = isStep3Valid();
+    f.innerHTML = `<button class="btn btn-outlined t-sb-14" onclick="goPrev()">이전</button><div class="footer-right"><button class="btn btn-outlined t-sb-14" onclick="goNext()">건너뛰기</button><button class="btn ${valid?'btn-filled':'btn-disabled'} t-sb-14" onclick="${valid?'goNext()':''}" ${valid?'':'disabled'}>다음 단계</button></div>`;
   } else {
     f.innerHTML = `<button class="btn btn-outlined t-sb-14" onclick="goPrev()">이전</button><div class="footer-right"><button class="btn btn-outlined t-sb-14" onclick="goNext()">건너뛰기</button><button class="btn btn-filled t-sb-14" onclick="goNext()">다음 단계</button></div>`;
   }
 }
 
 function renderBizTable() {
-  document.getElementById('biz-table').innerHTML = BIZ_DATA.map((b,i) => `
-    <tr class="${selectedBiz===i?'selected':''}" onclick="selectBiz(${i})">
+  // star가 true인 항목을 최상단으로 정렬
+  const sorted = BIZ_DATA.map((b,i)=>({...b,_i:i}));
+  sorted.sort((a,b) => (b.star?1:0) - (a.star?1:0));
+  document.getElementById('biz-table').innerHTML = sorted.map(b => {
+    const i = b._i;
+    const btnClass = selectedBiz===i ? 'btn-filled' : 'btn-outlined';
+    const btnText = selectedBiz===i ? '선택됨' : '선택';
+    return `<tr class="${selectedBiz===i?'selected':''}" onclick="selectBiz(${i})">
       <td><span class="star ${b.star?'active':''}" onclick="event.stopPropagation();toggleStar(${i})"><svg width="16" height="16" viewBox="0 0 24 24" fill="${b.star?'#fbbf24':'none'}" stroke="${b.star?'#fbbf24':'var(--line-d)'}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span></td>
       <td class="t-rg-14">${b.name} <span class="ext-link">↗</span></td>
       <td class="t-rg-13">${b.date}</td>
       <td><span class="ds-badge ${b.ddayType} t-sb-14">${b.dday}</span></td>
       <td class="t-rg-13" style="color:var(--text-2)">${b.org}</td>
-      <td></td>
-    </tr>`).join('');
+      <td><button class="btn ${btnClass} btn-sm t-md-13" onclick="event.stopPropagation();selectBiz(${i})">${btnText}</button></td>
+    </tr>`;
+  }).join('');
+}
+
+function sortBizData() {
+  const sort = document.getElementById('biz-sort').value;
+  if(sort === 'dday') {
+    BIZ_DATA.sort((a,b) => parseInt(a.dday.replace('D-','')) - parseInt(b.dday.replace('D-','')));
+  } else {
+    BIZ_DATA.sort((a,b) => b.date.localeCompare(a.date));
+  }
+  selectedBiz = null;
+  renderBizTable();
+  renderFooter();
 }
 
 const DOC_DATA = [
@@ -639,24 +695,21 @@ const DOC_DATA = [
   {name:'초안생성파일',item:'블록체인 기반 전자계약 시스템',date:'26.01.15 10:30',uploaded:false,type:'draft',star:false},
 ];
 const docFileIcon = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></svg>';
-const draftFileIcon = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="m 9 15 2 2 4-4"/></svg>';
+const draftFileIcon = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M16.5 15.5l-2-2L8 20v2h2l6.5-6.5z"/></svg>';
 
 function renderDocTable() {
   document.getElementById('doc-table').innerHTML = DOC_DATA.map((doc, i) => {
     const isDraft = doc.type === 'draft';
     const iconHtml = isDraft
-      ? `<span class="doc-icon" style="background:var(--accent-sub);color:var(--accent);">${draftFileIcon}</span>`
+      ? `<span class="doc-icon">${draftFileIcon}</span>`
       : `<img src="hwpx-icon.webp" alt="" style="width:20px;height:20px;object-fit:contain;margin-right:var(--sp-2);vertical-align:middle;">`;
     const displayName = isDraft ? doc.item : doc.name;
-    const badgeClass = isDraft ? 'default' : 'info';
-    const badgeLabel = isDraft ? '초안' : '양식 채우기';
     const rowClass = doc.uploaded ? 'selected-row' : '';
     const btnClass = doc.uploaded ? 'btn-filled' : 'btn-outlined';
     const btnText = doc.uploaded ? '선택됨' : '선택';
     return `<tr class="${rowClass}">
       <td><span class="star ${doc.star?'active':''}" onclick="event.stopPropagation();toggleDocStar(${i})" style="cursor:pointer;"><svg width="16" height="16" viewBox="0 0 24 24" fill="${doc.star?'#fbbf24':'none'}" stroke="${doc.star?'#fbbf24':'var(--line-d)'}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span></td>
       <td class="t-rg-14">${iconHtml}${displayName}</td>
-      <td><span class="ds-badge ${badgeClass} t-rg-12">${badgeLabel}</span></td>
       <td class="t-rg-13">${doc.date}</td>
       <td><button class="btn ${btnClass} btn-sm t-md-13" onclick="event.stopPropagation();toggleDocUpload(${i})">${btnText}</button></td>
     </tr>`;
@@ -673,6 +726,7 @@ function toggleDocUpload(i) {
   DOC_DATA.forEach((d,j) => d.uploaded = false);
   if(!wasUploaded) DOC_DATA[i].uploaded = true;
   renderDocTable();
+  renderFooter();
   const displayName = DOC_DATA[i].type === 'draft' ? DOC_DATA[i].item : DOC_DATA[i].name;
   toast(DOC_DATA[i].uploaded ? `'${displayName}' 선택됨` : '선택이 해제되었습니다');
 }
@@ -685,7 +739,8 @@ function renderImgTable() {
       <td><input class="img-input ${img.checked?'active':''}" value="${img.prompt}" /></td>
       <td><button class="icon-btn-text" title="삭제" onclick="removeImg(${i})"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button></td>
     </tr>`).join('');
-  document.getElementById('img-count').innerHTML = `선택된 이미지: ${IMG_DATA.filter(i=>i.checked).length} / 8`;
+  const checkedCount = IMG_DATA.filter(i=>i.checked).length;
+  document.getElementById('img-count').innerHTML = `선택된 이미지: <span class="count-highlight">${checkedCount}</span> / 10`;
 }
 
 const AI_QUESTIONS = [
@@ -729,11 +784,18 @@ function renderAiQuestions() {
   `).join('');
 }
 
-function goToStep(n) { if(n<currentStep) { currentStep=n; render(); } }
+function goToStep(n) { /* 스텝퍼 클릭 이동 비활성화 */ }
 function goHome() { currentStep=1; selectedBiz=null; render(); renderBizTable(); toast('처음으로 돌아왔습니다'); }
 
 function goNext() {
   if(currentStep>=6) return;
+  // Step 4 → Step 5 진입 시: 프롬프트와 자료 둘 다 비었으면 경고
+  if(currentStep===4) {
+    if(!isStep2Valid() && !isStep3Valid()) {
+      toast('프롬프트 입력 또는 자료 업로드 중 하나는 진행해야 합니다.');
+      return;
+    }
+  }
   if(currentStep===3) { showImageLoading(); return; }
   currentStep++; render();
 }
@@ -770,12 +832,19 @@ function showImageLoading() {
     }
   }, 1200);
 }
-function goPrev() { if(currentStep>1) { currentStep--; render(); } }
+function goPrev() {
+  if(currentStep>1) {
+    if(currentStep===4) {
+      if(!confirm('이전 단계로 돌아가면 준비된 이미지 프롬프트가 초기화될 수 있습니다. 계속하시겠습니까?')) return;
+    }
+    currentStep--; render();
+  }
+}
 function selectBiz(i) { selectedBiz = selectedBiz===i?null:i; renderBizTable(); renderFooter(); updateSelectedName(); if(selectedBiz!==null) toast(`'${BIZ_DATA[i].name.substring(0,25)}...' 양식 선택됨`); }
 function toggleStar(i) { BIZ_DATA[i].star=!BIZ_DATA[i].star; renderBizTable(); }
 function toggleImg(i) { IMG_DATA[i].checked=!IMG_DATA[i].checked; renderImgTable(); }
 function addNewImage() {
-  if(IMG_DATA.length >= 8) { toast('이미지는 최대 8장까지 선택할 수 있습니다'); return; }
+  if(IMG_DATA.length >= 10) { toast('이미지는 최대 10장까지 선택할 수 있습니다'); return; }
   IMG_DATA.push({title:'새 이미지 ' + (IMG_DATA.length+1), prompt:'', checked:true});
   renderImgTable();
   toast('새 이미지 항목이 추가되었습니다');
@@ -828,6 +897,7 @@ function submitRequest() {
   closeModal('modal-request');
   document.getElementById('req-biz-name').value = '';
   document.getElementById('req-url').value = '';
+  document.getElementById('req-email').value = '';
   reqFile = null; renderReqFile();
   toast('양식 신청이 완료되었습니다. 검토 후 약 24시간 이내에 반영됩니다.');
 }
@@ -915,7 +985,7 @@ function closeUploadModal() {
 }
 
 function handleUploadFiles(fileList) {
-  const allowed = ['.hwp','.hwpx','.docx','.pdf'];
+  const allowed = ['.hwp','.hwpx'];
   for(const f of fileList) {
     const ext = '.' + f.name.split('.').pop().toLowerCase();
     if(!allowed.includes(ext)) { toast(`${ext} 파일은 지원하지 않습니다`); continue; }
@@ -986,6 +1056,8 @@ function confirmUpload() {
         toast(`'${name}' 양식이 업로드되었습니다`);
         // 모달 원래 내용 복원
         restoreUploadModal();
+        // 업로드 완료 시 바로 Step 2로 이동
+        goNext();
       },600);
     }
   },1200);
@@ -998,13 +1070,13 @@ function restoreUploadModal() {
       <div class="t-sb-18">양식 직접 업로드</div>
       <button class="upload-modal-close" onclick="closeUploadModal()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
     </div>
-    <div class="t-rg-14" style="color:var(--text-3);margin-bottom:var(--sp-5);">사업계획서 양식 파일을 업로드하면 해당 양식 기반으로 문서가 생성됩니다.</div>
+    <div class="t-rg-14" style="color:var(--text-3);margin-bottom:var(--sp-5);">사업계획서 양식 파일을 업로드하면 해당 양식 기반으로 문서를 생성할 수 있습니다.</div>
     <div class="upload-dropzone" id="upload-dropzone" onclick="document.getElementById('upload-file-input').click()">
       <div class="upload-dropzone-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg></div>
       <div class="t-md-14" style="color:var(--text-1);margin-bottom:var(--sp-1);">클릭하여 파일을 선택하거나 여기로 드래그해주세요</div>
-      <div class="t-rg-13" style="color:var(--text-off);">hwp, hwpx, docx, pdf 파일 (최대 30MB)</div>
+      <div class="t-rg-13" style="color:var(--text-off);">hwp, hwpx 파일 (최대 30MB)</div>
     </div>
-    <input type="file" id="upload-file-input" accept=".hwp,.hwpx,.docx,.pdf" style="display:none" onchange="handleUploadFiles(this.files)" />
+    <input type="file" id="upload-file-input" accept=".hwp,.hwpx" style="display:none" onchange="handleUploadFiles(this.files)" />
     <div class="upload-file-list" id="upload-file-list"></div>
     <div class="upload-modal-footer">
       <button class="btn btn-outlined btn-md" onclick="closeUploadModal()">취소</button>
@@ -1096,6 +1168,12 @@ function render() {
 }
 
 renderBizTable(); renderDocTable(); renderImgTable(); render();
+
+// Step 2 textarea 입력 시 footer 업데이트
+document.addEventListener('input', function(e) {
+  if(currentStep===2 && e.target.closest('#step-2')) renderFooter();
+  if(currentStep===3 && e.target.closest('#step-3')) renderFooter();
+});
 
 const urlParams = new URLSearchParams(window.location.search);
 const stepParam = urlParams.get('step');
