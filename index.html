@@ -291,11 +291,11 @@
   /* ===== Toast ===== */
   .toast { position: fixed; bottom: var(--sp-6); left: 50%; transform: translateX(-50%) translateY(80px); background: var(--black); color: #fff; padding: var(--sp-3) var(--sp-6); border-radius: var(--r-lg); opacity: 0; transition: all 0.3s; z-index: 100; pointer-events: none; box-shadow: var(--sh-md); }
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-/* Doc Tab Bar */
-.doc-tab-bar { display:flex; gap:0; margin-bottom:0; border-bottom:1px solid var(--line-d); }
-.doc-tab { background:none; border:none; border-bottom:3px solid transparent; padding:12px 24px; font-family:var(--font); font-size:16px; font-weight:500; letter-spacing:var(--ls); color:var(--text-off); cursor:pointer; transition:all 0.15s; }
-.doc-tab.active { color:var(--text-1); font-weight:600; border-bottom-color:var(--text-1); }
-.doc-tab:hover:not(.active) { color:var(--text-2); }
+/* Doc Badge & Selected Row */
+.ds-badge.info { background: #EBF5FF; color: #2563EB; }
+.ds-badge.default { background: #F3F4F6; color: #6B7280; }
+tr.selected-row { background-color: #F0F7FF; }
+tr.selected-row:hover { background-color: #E0EFFF; }
 </style>
 <script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
 </head>
@@ -354,15 +354,11 @@
           <div class="step-title t-sb-20"><span class="hl selected-name"></span><br/>사업계획서 작성을 위한 자료를 업로드해주세요</div>
           <div class="info-banner t-rg-13"><span class="ic">&#x24D8;</span> 기존에 만들었던 다른 사업계획서 파일 혹은 이외 파일들을 업로드하는 단계입니다. 단계를 건너뛸 수 있습니다.</div>
           <div class="section-title t-sb-16">기존 작성 문서 불러오기</div>
-          <div class="doc-tab-bar">
-            <button class="doc-tab active" onclick="switchDocTab('form', this)">양식 채우기</button>
-            <button class="doc-tab" onclick="switchDocTab('draft', this)">초안 만들기</button>
-          </div>
           <table>
-            <thead><tr><th style="width:50px">관심</th><th>문서명</th><th>아이템명</th><th style="width:130px">생성 일시</th><th style="width:100px"></th></tr></thead>
+            <thead><tr><th style="width:50px">관심</th><th>문서명</th><th style="width:120px">유형</th><th style="width:130px">생성 일시</th><th style="width:100px"></th></tr></thead>
             <tbody id="doc-table"></tbody>
           </table>
-          <div class="pagination" style="margin-bottom:var(--sp-8);"><span class="pg">&lsaquo;</span><span class="pg active">1</span><span class="pg">2</span><span class="pg">3</span><span class="pg">&rsaquo;</span></div>
+          <div class="pagination" style="margin-bottom:var(--sp-8);"><span class="pg">&lsaquo;</span><span class="pg">1</span><span class="pg">&hellip;</span><span class="pg">19</span><span class="pg active">20</span><span class="pg">21</span><span class="pg">&hellip;</span><span class="pg">86</span><span class="pg">&rsaquo;</span></div>
           <div class="section-title t-sb-16">파일 업로드하기</div>
           <div class="drop-zone" onclick="openModal('modal-step3-upload')" style="cursor:pointer;">
             <div class="up-icon">&#x2B06;</div>
@@ -631,24 +627,40 @@ function renderBizTable() {
 }
 
 const DOC_DATA = [
-  {name:'초기창업패키지 2026년 사업계획서',item:'AI 행정문서 자동작성 플랫폼',date:'26.03.15 14:30',uploaded:false,draft:false,star:true},
-  {name:'예비창업패키지 최종본',item:'스마트 물류 관리 솔루션',date:'26.03.12 09:20',uploaded:false,draft:false,star:false},
-  {name:'초안생성파일',item:'친환경 포장재 유통 마켓플레이스',date:'26.02.28 16:45',uploaded:false,draft:true,star:false},
-  {name:'소셜벤처 육성사업 제안서',item:'시니어 건강관리 앱 서비스',date:'26.02.20 11:00',uploaded:false,draft:false,star:true},
-  {name:'초안생성파일',item:'블록체인 기반 전자계약 시스템',date:'26.01.15 10:30',uploaded:false,draft:true,star:false},
+  {name:'예비창업패키지 초안 v3',item:'AI 행정문서 자동작성 플랫폼',date:'26.03.22 17:40',uploaded:false,type:'draft',star:true},
+  {name:'초기창업패키지 초안 v2',item:'스마트 물류 관리 솔루션',date:'26.03.18 11:15',uploaded:false,type:'draft',star:false},
+  {name:'초기창업패키지 2026년 사업계획서',item:'AI 행정문서 자동작성 플랫폼',date:'26.03.15 14:30',uploaded:false,type:'form',star:true},
+  {name:'예비창업패키지 최종본',item:'스마트 물류 관리 솔루션',date:'26.03.12 09:20',uploaded:false,type:'form',star:false},
+  {name:'소셜벤처 육성사업 초안 v1',item:'시니어 건강관리 앱 서비스',date:'26.03.10 09:30',uploaded:false,type:'draft',star:false},
+  {name:'초안생성파일',item:'친환경 포장재 유통 마켓플레이스',date:'26.02.28 16:45',uploaded:false,type:'draft',star:false},
+  {name:'창업도약패키지 초안 v1',item:'친환경 포장재 유통 마켓플레이스',date:'26.02.25 14:00',uploaded:false,type:'draft',star:true},
+  {name:'소셜벤처 육성사업 제안서',item:'시니어 건강관리 앱 서비스',date:'26.02.20 11:00',uploaded:false,type:'form',star:true},
+  {name:'글로벌 진출 전략 초안 v1',item:'블록체인 기반 전자계약 시스템',date:'26.02.01 16:20',uploaded:false,type:'draft',star:false},
+  {name:'초안생성파일',item:'블록체인 기반 전자계약 시스템',date:'26.01.15 10:30',uploaded:false,type:'draft',star:false},
 ];
 const docFileIcon = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></svg>';
 const draftFileIcon = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="m 9 15 2 2 4-4"/></svg>';
 
 function renderDocTable() {
-  document.getElementById('doc-table').innerHTML = DOC_DATA.map((doc, i) => `
-    <tr>
+  document.getElementById('doc-table').innerHTML = DOC_DATA.map((doc, i) => {
+    const isDraft = doc.type === 'draft';
+    const iconHtml = isDraft
+      ? `<span class="doc-icon" style="background:var(--accent-sub);color:var(--accent);">${draftFileIcon}</span>`
+      : `<img src="hwpx-icon.webp" alt="" style="width:20px;height:20px;object-fit:contain;margin-right:var(--sp-2);vertical-align:middle;">`;
+    const displayName = isDraft ? doc.item : doc.name;
+    const badgeClass = isDraft ? 'default' : 'info';
+    const badgeLabel = isDraft ? '초안' : '양식 채우기';
+    const rowClass = doc.uploaded ? 'selected-row' : '';
+    const btnClass = doc.uploaded ? 'btn-filled' : 'btn-outlined';
+    const btnText = doc.uploaded ? '선택됨' : '선택';
+    return `<tr class="${rowClass}">
       <td><span class="star ${doc.star?'active':''}" onclick="event.stopPropagation();toggleDocStar(${i})" style="cursor:pointer;"><svg width="16" height="16" viewBox="0 0 24 24" fill="${doc.star?'#fbbf24':'none'}" stroke="${doc.star?'#fbbf24':'var(--line-d)'}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span></td>
-      <td class="t-rg-14"><span class="doc-icon" ${doc.draft?'style="background:var(--accent-sub);color:var(--accent);"':''}>${doc.draft?draftFileIcon:docFileIcon}</span>${doc.name}</td>
-      <td class="t-rg-13" style="color:var(--text-3)">${doc.item}</td>
+      <td class="t-rg-14">${iconHtml}${displayName}</td>
+      <td><span class="ds-badge ${badgeClass} t-rg-12">${badgeLabel}</span></td>
       <td class="t-rg-13">${doc.date}</td>
-      <td><button class="btn ${doc.uploaded?'btn-filled':'btn-outlined'} btn-sm t-md-13" onclick="event.stopPropagation();toggleDocUpload(${i})">업로드</button></td>
-    </tr>`).join('');
+      <td><button class="btn ${btnClass} btn-sm t-md-13" onclick="event.stopPropagation();toggleDocUpload(${i})">${btnText}</button></td>
+    </tr>`;
+  }).join('');
 }
 
 function toggleDocStar(i) {
@@ -661,7 +673,8 @@ function toggleDocUpload(i) {
   DOC_DATA.forEach((d,j) => d.uploaded = false);
   if(!wasUploaded) DOC_DATA[i].uploaded = true;
   renderDocTable();
-  toast(DOC_DATA[i].uploaded ? `'${DOC_DATA[i].name}' 선택됨` : '선택이 해제되었습니다');
+  const displayName = DOC_DATA[i].type === 'draft' ? DOC_DATA[i].item : DOC_DATA[i].name;
+  toast(DOC_DATA[i].uploaded ? `'${displayName}' 선택됨` : '선택이 해제되었습니다');
 }
 
 function renderImgTable() {
@@ -719,31 +732,6 @@ function renderAiQuestions() {
 function goToStep(n) { if(n<currentStep) { currentStep=n; render(); } }
 function goHome() { currentStep=1; selectedBiz=null; render(); renderBizTable(); toast('처음으로 돌아왔습니다'); }
 
-// Doc tab switching for Step 3
-const draftDocs = [
-  { star: true, name: '예비창업패키지 초안 v3', item: 'AI 행정문서 자동작성 플랫폼', date: '26.03.22 17:40', type: 'hwpx' },
-  { star: false, name: '초기창업패키지 초안 v2', item: '스마트 물류 관리 솔루션', date: '26.03.18 11:15', type: 'hwpx' },
-  { star: false, name: '소셜벤처 육성사업 초안 v1', item: '시니어 건강관리 앱 서비스', date: '26.03.10 09:30', type: 'docx' },
-  { star: true, name: '창업도약패키지 초안 v1', item: '친환경 포장재 유통 마켓플레이스', date: '26.02.25 14:00', type: 'hwpx' },
-  { star: false, name: '글로벌 진출 전략 초안 v1', item: '블록체인 기반 전자계약 시스템', date: '26.02.01 16:20', type: 'docx' },
-];
-
-function switchDocTab(tab, el) {
-  document.querySelectorAll('.doc-tab').forEach(t => t.classList.remove('active'));
-  el.classList.add('active');
-  const tbody = document.getElementById('doc-table');
-  if (tab === 'draft') {
-    tbody.innerHTML = draftDocs.map(d => `<tr>
-      <td style="text-align:center;"><span style="color:${d.star?'#FACC15':'#E3E4E8'};cursor:pointer;">&#9733;</span></td>
-      <td><span class="doc-type-badge">${d.type.toUpperCase()}</span> ${d.name}</td>
-      <td style="color:var(--text-3);">${d.item}</td>
-      <td>${d.date}</td>
-      <td><button class="btn btn-outlined btn-sm t-md-13" onclick="toast('초안을 불러왔습니다')">불러오기</button></td>
-    </tr>`).join('');
-  } else {
-    renderDocTable();
-  }
-}
 function goNext() {
   if(currentStep>=6) return;
   if(currentStep===3) { showImageLoading(); return; }
